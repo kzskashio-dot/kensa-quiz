@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>臨床検査技師 国家試験 演習</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: "Helvetica Neue", "Noto Sans JP", sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+  <div class="min-h-screen flex flex-col">
+    <header class="bg-white shadow">
+      <div class="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
+        <h1 class="text-lg sm:text-xl font-semibold text-blue-700">臨床検査技師 国家試験 演習</h1>
+        <div id="progress" class="text-sm text-slate-500"></div>
+      </div>
+    </header>
+
+    <main class="flex-1">
+      <div class="max-w-3xl mx-auto px-4 py-6">
+        <!-- Quiz Card -->
+        <div id="quiz-card" class="bg-white shadow-sm rounded-lg p-5 sm:p-6 border border-slate-100">
+          <div class="flex items-center justify-between mb-3">
+            <span id="category" class="text-xs sm:text-sm font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded hidden"></span>
+            <span id="question-number" class="text-xs sm:text-sm text-slate-500"></span>
+          </div>
+          <h2 id="question-text" class="text-base sm:text-lg font-medium mb-2"></h2>
+          <p id="multi-hint" class="text-xs text-slate-500 mb-4 hidden">※複数選択問題です。該当数を選ぶと判定されます。</p>
+
+          <div id="image-wrap" class="mb-4 hidden">
+            <img id="question-image" src="" alt="問題画像" class="w-full max-h-72 object-contain rounded border border-slate-100 bg-slate-50"/>
+          </div>
+
+          <div id="choices" class="space-y-3"></div>
+
+          <div id="feedback" class="mt-4 hidden">
+            <div id="result-text" class="font-semibold"></div>
+            <div id="explanation" class="mt-2 text-sm text-slate-600 bg-slate-50 border border-slate-100 rounded p-3"></div>
+          </div>
+
+          <div class="mt-6 flex justify-end">
+            <button id="next-btn" class="bg-blue-600 text-white px-4 py-2 rounded shadow-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 transition">
+              次の問題へ
+            </button>
+          </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="bg-white shadow-sm rounded-lg p-6 border border-slate-100 hidden text-center">
+          <h2 class="text-xl font-semibold text-blue-700 mb-2">結果発表</h2>
+          <p id="score-text" class="text-lg mb-4"></p>
+          <button id="restart-btn" class="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 transition">
+            もう一度やる
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <footer class="text-center text-xs text-slate-400 py-4">
+      © Clinical Lab Quiz Prototype
+    </footer>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        id: "68",
+        category: "",
+        question_text: "偏性細胞内寄生性を有するのはどれか。",
+        image_url: null,
+        choices: [
+          "Neisseria meningitidis",
+          "Rickettsia prowazekii",
+          "Bordetella pertussis",
+          "Shigella dysenteriae",
+          "Candida albicans"
+        ],
+        correct_answer: 1,
+        explanation: "リケッチアは偏性細胞内寄生性で、宿主細胞内でのみ増殖する。"
+      },
+      {
+        id: "69",
+        category: "",
+        question_text: "細胞壁にミコール酸を多く含むのはどれか。",
+        image_url: null,
+        choices: [
+          "Bacillus cereus",
+          "Campylobacter jejuni",
+          "Clostridium botulinum",
+          "Mycobacterium abscessus",
+          "Yersinia enterocolitica"
+        ],
+        correct_answer: 3,
+        explanation: "抗酸菌（Mycobacterium属）の細胞壁はミコール酸を多く含む。"
+      },
+      {
+        id: "70",
+        category: "",
+        question_text: "皮膚の消毒には使用できるが、粘膜の消毒には使用できないのはどれか。",
+        image_url: null,
+        choices: [
+          "クレゾール石鹸",
+          "グルタラール",
+          "ポビドンヨード",
+          "消毒用エタノール",
+          "塩化ベンザルコニウム"
+        ],
+        correct_answer: 0,
+        explanation: "クレゾール石鹸は刺激性が強く、皮膚用で粘膜には使用できない。"
+      },
+      {
+        id: "71",
+        category: "",
+        question_text: "蛋白合成阻害薬はどれか。2つ選べ。",
+        image_url: null,
+        choices: [
+          "アミカシン",
+          "ピペラシリン",
+          "セファゾリン",
+          "エリスロマイシン",
+          "レボフロキサシン"
+        ],
+        correct_answer: [0, 3],
+        explanation: "アミカシン（30S）とエリスロマイシン（50S）は蛋白合成阻害薬。ピペラシリン・セファゾリンは細胞壁合成阻害、レボフロキサシンはDNAジャイレース阻害。"
+      },
+      {
+        id: "72",
+        category: "",
+        question_text: "毒素型食中毒の原因菌はどれか。",
+        image_url: null,
+        choices: [
+          "Salmonella Enteritidis",
+          "Yersinia enterocolitica",
+          "Vibrio parahaemolyticus",
+          "Campylobacter jejuni",
+          "Clostridium botulinum"
+        ],
+        correct_answer: 4,
+        explanation: "ボツリヌス菌は産生した毒素による毒素型食中毒の原因となる。"
+      }
+    ];
+
+    let currentIndex = 0;
+    let score = 0;
+    let answered = false;
+    let selectedIndices = new Set();
+
+    const progressEl = document.getElementById("progress");
+    const categoryEl = document.getElementById("category");
+    const questionNumberEl = document.getElementById("question-number");
+    const questionTextEl = document.getElementById("question-text");
+    const multiHintEl = document.getElementById("multi-hint");
+    const imageWrapEl = document.getElementById("image-wrap");
+    const questionImageEl = document.getElementById("question-image");
+    const choicesEl = document.getElementById("choices");
+    const feedbackEl = document.getElementById("feedback");
+    const resultTextEl = document.getElementById("result-text");
+    const explanationEl = document.getElementById("explanation");
+    const nextBtn = document.getElementById("next-btn");
+
+    const quizCard = document.getElementById("quiz-card");
+    const resultScreen = document.getElementById("result-screen");
+    const scoreTextEl = document.getElementById("score-text");
+    const restartBtn = document.getElementById("restart-btn");
+
+    function loadQuestion() {
+      answered = false;
+      selectedIndices = new Set();
+      nextBtn.disabled = true;
+      feedbackEl.classList.add("hidden");
+
+      const q = questions[currentIndex];
+      const isMulti = Array.isArray(q.correct_answer);
+
+      if (q.category) {
+        categoryEl.textContent = q.category;
+        categoryEl.classList.remove("hidden");
+      } else {
+        categoryEl.classList.add("hidden");
+      }
+
+      questionNumberEl.textContent = `問題 ${currentIndex + 1} / ${questions.length}`;
+      progressEl.textContent = `正答率: ${Math.round((score / Math.max(currentIndex,1)) * 100) || 0}%`;
+      questionTextEl.textContent = q.question_text;
+
+      multiHintEl.classList.toggle("hidden", !isMulti);
+
+      if (q.image_url) {
+        questionImageEl.src = q.image_url;
+        imageWrapEl.classList.remove("hidden");
+      } else {
+        imageWrapEl.classList.add("hidden");
+      }
+
+      choicesEl.innerHTML = "";
+      q.choices.forEach((choice, index) => {
+        const btn = document.createElement("button");
+        btn.className = "w-full text-left border border-slate-200 rounded px-4 py-3 hover:bg-blue-50 transition";
+        btn.textContent = choice;
+        btn.addEventListener("click", () => handleChoice(index, btn));
+        choicesEl.appendChild(btn);
+      });
+    }
+
+    function handleChoice(index, btn) {
+      if (answered) return;
+      const q = questions[currentIndex];
+      const isMulti = Array.isArray(q.correct_answer);
+
+      if (isMulti) {
+        if (selectedIndices.has(index)) {
+          selectedIndices.delete(index);
+          btn.classList.remove("border-blue-500", "bg-blue-50");
+        } else {
+          selectedIndices.add(index);
+          btn.classList.add("border-blue-500", "bg-blue-50");
+        }
+
+        if (selectedIndices.size === q.correct_answer.length) {
+          evaluateAnswer();
+        }
+      } else {
+        selectedIndices.clear();
+        selectedIndices.add(index);
+        evaluateAnswer();
+      }
+    }
+
+    function evaluateAnswer() {
+      const q = questions[currentIndex];
+      const isMulti = Array.isArray(q.correct_answer);
+      let isCorrect = false;
+
+      if (isMulti) {
+        const correctSet = new Set(q.correct_answer);
+        isCorrect = selectedIndices.size === correctSet.size &&
+          [...selectedIndices].every(i => correctSet.has(i));
+      } else {
+        const selected = [...selectedIndices][0];
+        isCorrect = selected === q.correct_answer;
+      }
+
+      if (isCorrect) score++;
+
+      Array.from(choicesEl.children).forEach((b, idx) => {
+        b.disabled = true;
+        if (isMulti ? q.correct_answer.includes(idx) : idx === q.correct_answer) {
+          b.classList.add("border-green-500", "bg-green-50");
+        }
+        if (selectedIndices.has(idx) && !(isMulti ? q.correct_answer.includes(idx) : idx === q.correct_answer)) {
+          b.classList.add("border-red-500", "bg-red-50");
+        }
+      });
+
+      resultTextEl.textContent = isCorrect ? "正解です！" : "不正解です。";
+      resultTextEl.className = isCorrect ? "font-semibold text-green-600" : "font-semibold text-red-600";
+      explanationEl.textContent = q.explanation || "解説はありません。";
+      feedbackEl.classList.remove("hidden");
+
+      nextBtn.disabled = false;
+      progressEl.textContent = `正答率: ${Math.round((score / (currentIndex + 1)) * 100)}%`;
+    }
+
+    nextBtn.addEventListener("click", () => {
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        loadQuestion();
+      } else {
+        showResult();
+      }
+    });
+
+    function showResult() {
+      quizCard.classList.add("hidden");
+      resultScreen.classList.remove("hidden");
+      const percentage = Math.round((score / questions.length) * 100);
+      scoreTextEl.textContent = `${score} / ${questions.length} 正解（正答率 ${percentage}%）`;
+    }
+
+    restartBtn.addEventListener("click", () => {
+      currentIndex = 0;
+      score = 0;
+      quizCard.classList.remove("hidden");
+      resultScreen.classList.add("hidden");
+      progressEl.textContent = "";
+      loadQuestion();
+    });
+
+    loadQuestion();
+  </script>
+</body>
+</html>
