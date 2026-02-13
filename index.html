@@ -4,42 +4,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>臨床検査技師国家試験対策 - 微生物学</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .option-btn { transition: all 0.2s ease-in-out; }
         .fade-in { animation: fadeIn 0.3s ease-in; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* PWAインストールバナー用（今回は標準ブラウザ機能に任せますがカスタムも可） */
     </style>
 </head>
-<body class="bg-slate-100 min-h-screen py-8 px-4 text-slate-800 font-sans">
+<body class="bg-slate-100 min-h-screen py-4 px-2 sm:py-8 sm:px-4 text-slate-800 font-sans select-none">
 
-    <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden min-h-[600px] flex flex-col">
+    <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden min-h-[80vh] flex flex-col relative">
         
-        <header class="bg-blue-600 text-white px-6 py-4 shadow-md z-10">
-            <h1 class="text-xl font-bold flex items-center gap-2">
-                <span onclick="location.reload()" class="cursor-pointer hover:underline">🦠 微生物学 演習</span>
+        <header class="bg-blue-600 text-white px-4 py-3 sm:px-6 sm:py-4 shadow-md z-10 flex justify-between items-center">
+            <h1 class="text-lg sm:text-xl font-bold flex items-center gap-2 cursor-pointer" onclick="location.reload()">
+                <span>🦠 微生物学 演習</span>
             </h1>
+            <button onclick="resetWrongQuestions()" class="text-xs bg-blue-700 hover:bg-blue-800 px-2 py-1 rounded text-blue-100 hidden" id="reset-history-btn">
+                学習履歴リセット
+            </button>
         </header>
 
-        <div id="start-screen" class="p-8 flex-1 flex flex-col fade-in">
-            <h2 class="text-2xl font-bold text-center mb-2">演習コースを選択</h2>
-            <p class="text-center text-slate-500 mb-8">学習したい分野、またはランダム出題を選んでください</p>
+        <div id="start-screen" class="p-6 sm:p-8 flex-1 flex flex-col fade-in overflow-y-auto">
+            
+            <div id="review-area" class="mb-6 hidden">
+                <button onclick="startQuiz('review')" class="w-full bg-red-100 hover:bg-red-200 border-2 border-red-400 text-red-700 font-bold text-lg py-4 px-6 rounded-xl shadow-sm transform transition hover:scale-[1.01] flex justify-between items-center group">
+                    <div class="flex items-center gap-2">
+                        <span>🔥 弱点克服</span>
+                        <span class="text-xs bg-red-500 text-white px-2 py-0.5 rounded-full">復習</span>
+                    </div>
+                    <div class="text-right">
+                        <span id="wrong-count" class="text-2xl font-extrabold">0</span>
+                        <span class="text-sm">問</span>
+                    </div>
+                </button>
+                <p class="text-xs text-slate-500 mt-1 text-right">※正解するとリストから消去されます</p>
+            </div>
 
-            <button onclick="startQuiz('random')" class="w-full bg-gradient-to-r from-orange-400 to-red-500 hover:from-orange-500 hover:to-red-600 text-white font-bold text-lg py-4 px-6 rounded-xl shadow-md transform transition hover:scale-[1.02] mb-8 flex justify-between items-center">
-                <span>🎲 ランダムで10問</span>
-                <span class="bg-white/20 text-sm px-2 py-1 rounded">実力試し</span>
-            </button>
+            <div class="grid grid-cols-1 gap-4 mb-8">
+                <button onclick="startQuiz('random')" class="w-full bg-gradient-to-r from-orange-400 to-red-500 hover:from-orange-500 hover:to-red-600 text-white font-bold text-lg py-4 px-6 rounded-xl shadow-md transform transition hover:scale-[1.02] flex justify-between items-center">
+                    <span>🎲 ランダム10問</span>
+                    <span class="bg-white/20 text-sm px-2 py-1 rounded">実力試し</span>
+                </button>
+            </div>
 
             <div class="border-t border-slate-200 my-4"></div>
             <p class="text-sm text-slate-400 font-bold mb-3">分野別演習</p>
 
-            <div id="category-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div id="category-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pb-10">
                 </div>
         </div>
 
-        <div id="quiz-screen" class="hidden p-6 flex-1 flex flex-col fade-in">
-            <div class="flex justify-between items-end border-b border-slate-100 pb-2 mb-4">
-                <span id="category-badge" class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">分野名</span>
+        <div id="quiz-screen" class="hidden p-4 sm:p-6 flex-1 flex flex-col fade-in overflow-y-auto">
+            <div class="flex justify-between items-end border-b border-slate-100 pb-2 mb-4 sticky top-0 bg-white z-10">
+                <span id="category-badge" class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded truncate max-w-[60%]">分野名</span>
                 <span id="progress-text" class="text-sm font-medium text-slate-500">1 / 10</span>
             </div>
 
@@ -48,13 +70,13 @@
                 <div id="options-container" class="flex flex-col space-y-3 mb-6"></div>
             </div>
 
-            <div id="explanation-container" class="hidden bg-slate-50 rounded-lg p-5 border border-slate-200 mt-4 mb-4">
+            <div id="explanation-container" class="hidden bg-slate-50 rounded-lg p-4 sm:p-5 border border-slate-200 mt-4 mb-4">
                 <div id="result-badge" class="inline-block px-3 py-1 rounded text-white font-bold mb-3"></div>
                 <p id="explanation-text" class="text-slate-700 whitespace-pre-wrap leading-relaxed text-sm"></p>
             </div>
 
-            <div id="controls-container" class="hidden text-right pt-2">
-                <button id="next-btn" onclick="nextQuestion()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow transition">
+            <div id="controls-container" class="hidden text-right pt-4 pb-8">
+                <button id="next-btn" onclick="nextQuestion()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow transition">
                     次の問題へ
                 </button>
             </div>
@@ -80,10 +102,10 @@
     </div>
 
     <script>
-        // --- 1. 問題データ (CSVから変換済み) ---
-        // sourceタグなどの不要な文字は除去しています
+        // --- 1. 問題データ (前回の81問のデータをそのまま使用) ---
+        // ※コード短縮のため、前回の fullQuizData の中身をここに貼り付けてください
         const fullQuizData = [
-    { id: 1, category: "総論（分類）", question: "原核生物に該当するのはどれか。", options: ["1. Candida albicans", "2. Escherichia coli", "3. Entamoeba histolytica", "4. Trichophyton rubrum", "5. Influenza virus"], correctIndex: 1, explanation: "【正解: 2】\n原核生物は細菌（真正細菌）と古細菌である。1,4は真菌（真核）、3は原虫（真核）、5はウイルス。" },
+             { id: 1, category: "総論（分類）", question: "原核生物に該当するのはどれか。", options: ["1. Candida albicans", "2. Escherichia coli", "3. Entamoeba histolytica", "4. Trichophyton rubrum", "5. Influenza virus"], correctIndex: 1, explanation: "【正解: 2】\n原核生物は細菌（真正細菌）と古細菌である。1,4は真菌（真核）、3は原虫（真核）、5はウイルス。" },
     { id: 2, category: "総論（構造）", question: "グラム陰性菌の細胞壁外膜を構成する主な成分はどれか。", options: ["1. ペプチドグリカン", "2. タイコ酸", "3. リポ多糖体（LPS）", "4. ミコール酸", "5. エルゴステロール"], correctIndex: 2, explanation: "【正解: 3】\nグラム陰性菌の外膜にはリポ多糖体（LPS）が存在し、内毒素活性を持つ。タイコ酸はグラム陽性菌、ミコール酸は抗酸菌、エルゴステロールは真菌。" },
     { id: 3, category: "総論（構造）", question: "細菌の芽胞について正しいのはどれか。", options: ["1. 熱に不安定である", "2. 消毒薬に感受性が高い", "3. 栄養欠乏時に形成される", "4. 生殖に関与する", "5. グラム陰性菌のみが形成する"], correctIndex: 2, explanation: "【正解: 3】\n芽胞は環境悪化（栄養欠乏など）時に形成される耐久型構造。熱や消毒薬に極めて強い。グラム陽性桿菌（Bacillus, Clostridium）が形成する。" },
     { id: 4, category: "総論（構造）", question: "真正細菌のリボソームの沈降係数はどれか。", options: ["1. 30S", "2. 50S", "3. 70S", "4. 80S", "5. 100S"], correctIndex: 2, explanation: "【正解: 3】\n原核生物（細菌）のリボソームは70S（30S+50S）。真核生物は80S（40S+60S）。" },
@@ -166,17 +188,30 @@
     { id: 81, category: "ウイルス", question: "ヒトパピローマウイルス（HPV）が関与するがんはどれか。", options: ["1. 胃癌", "2. 肝細胞癌", "3. 子宮頸癌", "4. 白血病", "5. 悪性リンパ腫"], correctIndex: 2, explanation: "【正解: 3】\nHPV（特に16型、18型などの高リスク型）の持続感染が子宮頸癌の主要な原因となる。ワクチンによる予防が可能。" }
 ];
 
+        // --- PWA Service Worker 登録 ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker Registered!', reg))
+                    .catch(err => console.log('Service Worker registration failed: ', err));
+            });
+        }
+
         // --- 状態管理 ---
         let currentQuizQueue = [];
         let currentIndex = 0;
         let score = 0;
+        // 間違えた問題IDの保存用キー
+        const STORAGE_KEY = 'microbio_wrong_questions';
 
         // --- DOM要素 ---
         const startScreen = document.getElementById('start-screen');
         const quizScreen = document.getElementById('quiz-screen');
         const resultScreen = document.getElementById('result-screen');
         const categoryGrid = document.getElementById('category-grid');
-
+        const reviewArea = document.getElementById('review-area');
+        const wrongCountDisplay = document.getElementById('wrong-count');
+        
         const categoryBadge = document.getElementById('category-badge');
         const progressText = document.getElementById('progress-text');
         const questionText = document.getElementById('question-text');
@@ -187,17 +222,52 @@
         const controlsContainer = document.getElementById('controls-container');
         const nextBtn = document.getElementById('next-btn');
 
-        // --- アプリの初期化（分野ボタン生成） ---
+        // --- ローカルストレージ操作 ---
+        function getWrongQuestions() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            return stored ? JSON.parse(stored) : [];
+        }
+
+        function addWrongQuestion(id) {
+            const list = getWrongQuestions();
+            if (!list.includes(id)) {
+                list.push(id);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+            }
+        }
+
+        function removeWrongQuestion(id) {
+            let list = getWrongQuestions();
+            list = list.filter(itemId => itemId !== id);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+        }
+
+        function resetWrongQuestions() {
+            if(confirm('間違えた問題の履歴を全て消去しますか？')) {
+                localStorage.removeItem(STORAGE_KEY);
+                location.reload();
+            }
+        }
+
+        // --- アプリ初期化 ---
         function initApp() {
-            // 分野のリストを抽出（重複排除）
+            // 間違えた問題の数をチェック
+            const wrongIds = getWrongQuestions();
+            if (wrongIds.length > 0) {
+                reviewArea.classList.remove('hidden');
+                wrongCountDisplay.innerText = wrongIds.length;
+                document.getElementById('reset-history-btn').classList.remove('hidden');
+            } else {
+                reviewArea.classList.add('hidden');
+            }
+
+            // 分野ボタン生成
             const categories = [...new Set(fullQuizData.map(q => q.category))];
-            
             categoryGrid.innerHTML = '';
             categories.forEach(cat => {
                 const btn = document.createElement('button');
-                btn.className = "bg-white border border-slate-200 hover:border-blue-400 hover:bg-blue-50 text-slate-700 font-medium py-3 px-4 rounded-lg shadow-sm text-left transition relative";
+                btn.className = "bg-white border border-slate-200 hover:border-blue-400 hover:bg-blue-50 text-slate-700 font-medium py-4 px-4 rounded-lg shadow-sm text-left transition relative";
                 
-                // その分野の問題数カウント
                 const count = fullQuizData.filter(q => q.category === cat).length;
                 
                 btn.innerHTML = `
@@ -209,49 +279,43 @@
             });
         }
 
-        // --- クイズ開始処理 ---
+        // --- クイズ開始 ---
         function startQuiz(mode) {
-            // モードに応じた問題セットの作成
             if (mode === 'random') {
-                // 全問題からランダムに10問抽出
-                currentQuizQueue = [...fullQuizData]
-                    .sort(() => 0.5 - Math.random())
-                    .slice(0, 10);
+                currentQuizQueue = [...fullQuizData].sort(() => 0.5 - Math.random()).slice(0, 10);
                 categoryBadge.innerText = "ランダム出題";
+            } else if (mode === 'review') {
+                // 復習モード：localStorageのIDリストに一致する問題を取得
+                const wrongIds = getWrongQuestions();
+                currentQuizQueue = fullQuizData.filter(q => wrongIds.includes(q.id));
+                // 念のためランダムにするか、ID順にするかはお好みで（ここではランダム）
+                currentQuizQueue.sort(() => 0.5 - Math.random());
+                categoryBadge.innerText = "🔥 弱点克服";
             } else {
-                // 指定された分野の問題を抽出
                 currentQuizQueue = fullQuizData.filter(q => q.category === mode);
                 categoryBadge.innerText = mode;
             }
 
             if (currentQuizQueue.length === 0) {
-                alert("問題が見つかりませんでした。");
+                alert("問題がありません。");
                 return;
             }
 
-            // 状態リセット
             currentIndex = 0;
             score = 0;
 
-            // 画面切り替え
             startScreen.classList.add('hidden');
             resultScreen.classList.add('hidden');
             quizScreen.classList.remove('hidden');
-
             renderQuestion();
         }
 
         // --- 問題描画 ---
         function renderQuestion() {
             const currentData = currentQuizQueue[currentIndex];
-
-            // 進捗表示
             progressText.innerText = `${currentIndex + 1} / ${currentQuizQueue.length}`;
-
-            // 問題文
             questionText.innerText = currentData.question;
 
-            // 選択肢
             optionsContainer.innerHTML = '';
             currentData.options.forEach((optionText, index) => {
                 const btn = document.createElement('button');
@@ -261,11 +325,8 @@
                 optionsContainer.appendChild(btn);
             });
 
-            // 解説エリア等は隠す
             explanationContainer.classList.add('hidden');
             controlsContainer.classList.add('hidden');
-            
-            // スクロール位置をリセット
             window.scrollTo(0, 0);
         }
 
@@ -275,14 +336,10 @@
             const isCorrect = (selectedIndex === currentData.correctIndex);
             const allBtns = optionsContainer.querySelectorAll('button');
 
-            // ボタン無効化とスタイリング
             allBtns.forEach((btn, idx) => {
                 btn.disabled = true;
-                btn.classList.remove('hover:bg-blue-50', 'hover:border-blue-400', 'cursor-pointer');
                 btn.classList.add('cursor-default');
-
                 if (idx === currentData.correctIndex) {
-                    // 正解は緑
                     btn.classList.remove('bg-white', 'border-slate-300', 'text-slate-600');
                     btn.classList.add('bg-green-100', 'border-green-500', 'font-bold', 'text-green-800');
                 }
@@ -292,25 +349,23 @@
                 score++;
                 resultBadge.innerText = "⭕ 正解！";
                 resultBadge.className = "inline-block px-3 py-1 rounded text-white font-bold mb-3 bg-green-500";
+                // 正解したら弱点リストから削除（復習完了）
+                removeWrongQuestion(currentData.id);
             } else {
-                // 不正解のボタンは赤
                 clickedBtn.classList.remove('bg-white', 'border-slate-300', 'text-slate-600');
                 clickedBtn.classList.add('bg-red-100', 'border-red-500', 'text-red-800');
-                
                 resultBadge.innerText = "❌ 不正解...";
                 resultBadge.className = "inline-block px-3 py-1 rounded text-white font-bold mb-3 bg-red-500";
+                // 間違えたら弱点リストに追加
+                addWrongQuestion(currentData.id);
             }
 
-            // 解説表示
             explanationText.innerText = currentData.explanation;
             explanationContainer.classList.remove('hidden');
-
-            // 次へボタン表示
             controlsContainer.classList.remove('hidden');
             nextBtn.innerText = (currentIndex === currentQuizQueue.length - 1) ? "結果を見る" : "次の問題へ";
         }
 
-        // --- 次の問題へ ---
         function nextQuestion() {
             currentIndex++;
             if (currentIndex < currentQuizQueue.length) {
@@ -320,21 +375,16 @@
             }
         }
 
-        // --- 結果表示 ---
         function showResult() {
             quizScreen.classList.add('hidden');
             resultScreen.classList.remove('hidden');
-
             document.getElementById('final-score').innerText = score;
             document.getElementById('total-questions').innerText = currentQuizQueue.length;
-            
             const accuracy = Math.round((score / currentQuizQueue.length) * 100);
             document.getElementById('accuracy-text').innerText = `正答率: ${accuracy}%`;
         }
 
-        // アプリ起動
         initApp();
-
     </script>
 </body>
 </html>
