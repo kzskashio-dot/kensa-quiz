@@ -52,6 +52,15 @@
                 </button>
             </div>
 
+<button onclick="startQuiz('exam_random')" class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold text-lg py-4 px-6 rounded-xl shadow-md transform transition hover:scale-[1.02] flex justify-between items-center mb-4">
+                <div class="flex items-center gap-2">
+                    <span>📖 国家試験過去問</span>
+                    <span class="text-xs bg-white/20 px-2 py-1 rounded">ランダム10問</span>
+                </div>
+                <span class="text-2xl">📝</span>
+            </button>
+
+
             <div class="border-t border-slate-200 my-4"></div>
             <p class="text-sm text-slate-400 font-bold mb-3">分野別演習</p>
 
@@ -101,11 +110,11 @@
 
     </div>
 
-    <script>
-        // --- 1. 問題データ (前回の81問のデータをそのまま使用) ---
-        // ※コード短縮のため、前回の fullQuizData の中身をここに貼り付けてください
+<script>
+        // --- 1. 問題データ ---
+        // ★ここに、これまでの全問題データを貼り付けてください★
         const fullQuizData = [
-             { id: 1, category: "総論（分類）", question: "原核生物に該当するのはどれか。", options: ["1. Candida albicans", "2. Escherichia coli", "3. Entamoeba histolytica", "4. Trichophyton rubrum", "5. Influenza virus"], correctIndex: 1, explanation: "【正解: 2】\n原核生物は細菌（真正細菌）と古細菌である。1,4は真菌（真核）、3は原虫（真核）、5はウイルス。" },
+                      { id: 1, category: "総論（分類）", question: "原核生物に該当するのはどれか。", options: ["1. Candida albicans", "2. Escherichia coli", "3. Entamoeba histolytica", "4. Trichophyton rubrum", "5. Influenza virus"], correctIndex: 1, explanation: "【正解: 2】\n原核生物は細菌（真正細菌）と古細菌である。1,4は真菌（真核）、3は原虫（真核）、5はウイルス。" },
     { id: 2, category: "総論（構造）", question: "グラム陰性菌の細胞壁外膜を構成する主な成分はどれか。", options: ["1. ペプチドグリカン", "2. タイコ酸", "3. リポ多糖体（LPS）", "4. ミコール酸", "5. エルゴステロール"], correctIndex: 2, explanation: "【正解: 3】\nグラム陰性菌の外膜にはリポ多糖体（LPS）が存在し、内毒素活性を持つ。タイコ酸はグラム陽性菌、ミコール酸は抗酸菌、エルゴステロールは真菌。" },
     { id: 3, category: "総論（構造）", question: "細菌の芽胞について正しいのはどれか。", options: ["1. 熱に不安定である", "2. 消毒薬に感受性が高い", "3. 栄養欠乏時に形成される", "4. 生殖に関与する", "5. グラム陰性菌のみが形成する"], correctIndex: 2, explanation: "【正解: 3】\n芽胞は環境悪化（栄養欠乏など）時に形成される耐久型構造。熱や消毒薬に極めて強い。グラム陽性桿菌（Bacillus, Clostridium）が形成する。" },
     { id: 4, category: "総論（構造）", question: "真正細菌のリボソームの沈降係数はどれか。", options: ["1. 30S", "2. 50S", "3. 70S", "4. 80S", "5. 100S"], correctIndex: 2, explanation: "【正解: 3】\n原核生物（細菌）のリボソームは70S（30S+50S）。真核生物は80S（40S+60S）。" },
@@ -139,9 +148,9 @@
     { id: 32, category: "腸内細菌", question: "Voges-Proskauer（VP）反応が陽性の菌はどれか。", options: ["1. Escherichia coli", "2. Salmonella Enteritidis", "3. Shigella flexneri", "4. Klebsiella pneumoniae", "5. Proteus vulgaris"], correctIndex: 3, explanation: "【正解: 4】\nVP反応はブドウ糖発酵によりアセトインを産生するかを見る。Klebsiella, Enterobacter, Serratiaなどは陽性。" },
     { id: 33, category: "腸内細菌", question: "Yersinia enterocoliticaの特徴的な運動性はどれか。", options: ["1. 常に運動性なし", "2. 37℃で活発に運動", "3. 25℃で運動性あり、37℃でなし", "4. 鞭毛を持たないが滑走運動する", "5. 極鞭毛による活発な運動"], correctIndex: 2, explanation: "【正解: 3】\nエルシニア属（ペスト菌除く）は低温（25℃付近）でのみ周毛性鞭毛を形成して運動する。37℃では鞭毛を作らない。" },
     { id: 34, category: "腸内細菌", question: "Serratia marcescensが産生することのある赤い色素はどれか。", options: ["1. ピオシアニン", "2. プロジギオシン", "3. フルオレセイン", "4. カロテノイド", "5. メラニン"], correctIndex: 1, explanation: "【正解: 2】\nセラチア菌の一部は赤色色素（プロジギオシン）を産生し、コロニーが赤くなる。室温培養で顕著。" },
-    { id: 35, category: "非発酵菌", question: "緑膿菌（Pseudomonas aeruginosa）の特徴で正しいのはどれか。", options: ["1. オキシダーゼ陰性", "2. ブドウ糖を発酵する", "3. 42℃で発育可能", "4. グラム陽性球菌", "5. H2Sを産生する"], correctIndex: 2, explanation: "【正解: 3】\n緑膿菌はブドウ糖非発酵、オキシダーゼ陽性、42℃発育可、NAC寒天で発育などが特徴。" },
-    { id: 36, category: "非発酵菌", question: "緑膿菌が産生する緑色色素はどれか。", options: ["1. フルオレセイン", "2. ピオシアニン", "3. プロディジオシン", "4. ビリルビン", "5. ヘモグロビン"], correctIndex: 1, explanation: "【正解: 2】\nピオシアニン（緑色）とピオベルディン（蛍光黄緑色＝フルオレセイン）を産生するが、緑膿菌特異的なのはピオシアニン。" },
-    { id: 37, category: "非発酵菌", question: "Acinetobacter baumanniiの性状として正しいのはどれか。", options: ["1. グラム陽性桿菌", "2. オキシダーゼ陽性", "3. 運動性あり", "4. オキシダーゼ陰性・運動性なし", "5. ブドウ糖発酵"], correctIndex: 3, explanation: "【正解: 4】\nアシネトバクターはグラム陰性球桿菌。ブドウ糖非発酵菌だが、緑膿菌と異なりオキシダーゼ陰性である点が重要。" },
+    { id: 35, category: "ブドウ糖非発酵菌", question: "緑膿菌（Pseudomonas aeruginosa）の特徴で正しいのはどれか。", options: ["1. オキシダーゼ陰性", "2. ブドウ糖を発酵する", "3. 42℃で発育可能", "4. グラム陽性球菌", "5. H2Sを産生する"], correctIndex: 2, explanation: "【正解: 3】\n緑膿菌はブドウ糖非発酵、オキシダーゼ陽性、42℃発育可、NAC寒天で発育などが特徴。" },
+    { id: 36, category: "ブドウ糖非発酵菌", question: "緑膿菌が産生する緑色色素はどれか。", options: ["1. フルオレセイン", "2. ピオシアニン", "3. プロディジオシン", "4. ビリルビン", "5. ヘモグロビン"], correctIndex: 1, explanation: "【正解: 2】\nピオシアニン（緑色）とピオベルディン（蛍光黄緑色＝フルオレセイン）を産生するが、緑膿菌特異的なのはピオシアニン。" },
+    { id: 37, category: "ブドウ糖非発酵菌", question: "Acinetobacter baumanniiの性状として正しいのはどれか。", options: ["1. グラム陽性桿菌", "2. オキシダーゼ陽性", "3. 運動性あり", "4. オキシダーゼ陰性・運動性なし", "5. ブドウ糖発酵"], correctIndex: 3, explanation: "【正解: 4】\nアシネトバクターはグラム陰性球桿菌。ブドウ糖非発酵菌だが、緑膿菌と異なりオキシダーゼ陰性である点が重要。" },
     { id: 38, category: "陰性桿菌", question: "Vibrio parahaemolyticus（腸炎ビブリオ）の好塩性はどれか。", options: ["1. 食塩なしで発育可能", "2. 1%食塩で発育抑制", "3. 3～4%食塩でよく発育", "4. 10%以上の食塩が必要", "5. 食塩濃度に関係なく発育"], correctIndex: 2, explanation: "【正解: 3】\n海水細菌であり、増殖に塩分（Na+）を必須とする。真水では死滅しやすい。" },
     { id: 39, category: "陰性桿菌", question: "TCBS寒天培地で緑色コロニーを形成するVibrioはどれか。", options: ["1. Vibrio cholerae", "2. Vibrio alginolyticus", "3. Vibrio parahaemolyticus", "4. Vibrio furnissii", "5. Vibrio metschnikovii"], correctIndex: 2, explanation: "【正解: 3】\n白糖非分解菌（V. parahaemolyticus, V. vulnificus）は緑色コロニー。白糖分解菌（V. cholerae, V. alginolyticus）は黄色コロニー。" },
     { id: 40, category: "陰性桿菌", question: "Haemophilus influenzaeの発育に必要な因子はどれか。", options: ["1. X因子のみ", "2. V因子のみ", "3. X因子とV因子の両方", "4. 鉄とシステイン", "5. コレステロール"], correctIndex: 2, explanation: "【正解: 3】\nインフルエンザ菌はX因子（ヘミン）とV因子（NAD）の両方を要求する。チョコレート寒天培地にはこれらが含まれる。" },
@@ -185,33 +194,1452 @@
     { id: 78, category: "臨床", question: "尿路感染症（単純性膀胱炎など）の起因菌として最も頻度が高いのはどれか。", options: ["1. Pseudomonas aeruginosa", "2. Staphylococcus aureus", "3. Escherichia coli", "4. Enterococcus faecalis", "5. Candida albicans"], correctIndex: 2, explanation: "【正解: 3】\n腸内細菌である大腸菌が尿道口から逆行性に感染するケースが圧倒的に多い。" },
     { id: 79, category: "細菌各論", question: "食中毒の原因菌で、食品中で産生された神経毒素により呼吸麻痺などの症状を起こすのはどれか。", options: ["1. Salmonella Enteritidis", "2. Vibrio parahaemolyticus", "3. Staphylococcus aureus", "4. Clostridium botulinum", "5. Campylobacter jejuni"], correctIndex: 3, explanation: "【正解: 4】\nボツリヌス菌は毒素型食中毒を起こす。ボツリヌス毒素は神経筋接合部でのアセチルコリン放出を阻害し、弛緩性麻痺・呼吸麻痺を起こす。" },
     { id: 80, category: "細菌各論", question: "劇症型溶血性レンサ球菌感染症の主な原因菌はどれか。", options: ["1. Staphylococcus aureus", "2. Streptococcus agalactiae", "3. Streptococcus pyogenes", "4. Enterococcus faecium", "5. Streptococcus mutans"], correctIndex: 2, explanation: "【正解: 3】\nA群溶血性レンサ球菌（S. pyogenes）によるものが代表的。急速に進行する壊死性筋膜炎やトキシックショック様症候群を呈する。" },
-    { id: 81, category: "ウイルス", question: "ヒトパピローマウイルス（HPV）が関与するがんはどれか。", options: ["1. 胃癌", "2. 肝細胞癌", "3. 子宮頸癌", "4. 白血病", "5. 悪性リンパ腫"], correctIndex: 2, explanation: "【正解: 3】\nHPV（特に16型、18型などの高リスク型）の持続感染が子宮頸癌の主要な原因となる。ワクチンによる予防が可能。" }
-];
+    { id: 81, category: "ウイルス", question: "ヒトパピローマウイルス（HPV）が関与するがんはどれか。", options: ["1. 胃癌", "2. 肝細胞癌", "3. 子宮頸癌", "4. 白血病", "5. 悪性リンパ腫"], correctIndex: 2, explanation: "【正解: 3】\nHPV（特に16型、18型などの高リスク型）の持続感染が子宮頸癌の主要な原因となる。ワクチンによる予防が可能。" },
+
+
+            // ▼▼▼ 追加データ：国家試験過去問（多肢選択対応修正版） ▼▼▼
+            { 
+                id: 101, sourceId: "60AM68", category: "総論（分類）", 
+                question: "真核細胞に分類されるのはどれか。", 
+                options: ["1. Bacillus anthracis", "2. Candida albicans", "3. Chlamydia trachomatis", "4. Orientia tsutsugamushi", "5. Treponema pallidum"], 
+                correctIndices: [1], // 1つ選ぶ問題も配列形式で統一すると管理が楽です（数値のままでも動くようコード側で吸収します）
+                explanation: "【正解: 2】\nCandidaなどの真菌は「真核生物」です。" 
+            },
+            { 
+                id: 102, sourceId: "64AM68", category: "総論（分類）", 
+                question: "原核生物はどれか。２つ選べ。", 
+                options: ["1. Aspergillus fumigatus", "2. Candida albicans", "3. Chlamydia psittaci", "4. Entamoeba histolytica", "5. Escherichia coli"], 
+                correctIndices: [2, 4], // 3.クラミジア と 5.大腸菌 が正解
+                explanation: "【正解: 3, 5】\n原核生物（細菌）は、3. Chlamydia psittaciと 5. Escherichia coliです。\n1,2は真菌、4は原虫（真核）です。" 
+            },
+            { 
+                id: 103, sourceId: "67AM68", category: "総論（構造）", 
+                question: "原核生物の特徴で正しいのはどれか。", 
+                options: ["1. 核膜を有する", "2. 有糸分裂する", "3. 環状の染色体を有する", "4. ミトコンドリアを有する", "5. 細胞壁はセルロースからなる"], 
+                correctIndices: [2], 
+                explanation: "【正解: 3】\n原核生物のDNAは核膜に包まれておらず、多くは環状二本鎖DNAです。" 
+            },
+            { 
+                id: 104, sourceId: "60AM69", category: "真菌", 
+                question: "糸状菌はどれか。２つ選べ。", 
+                options: ["1. Aspergillus fumigatus", "2. Candida albicans", "3. Cryptococcus neoformans", "4. Trichophyton rubrum", "5. Trichosporon asahii"], 
+                correctIndices: [0, 3], // 1.アスペルギルス と 4.白癬菌 が正解
+                explanation: "【正解: 1, 4】\n糸状菌は、1. Aspergillusと 4. Trichophytonです。\n2,3は酵母、5は酵母様真菌です。" 
+            },
+            { 
+                id: 105, sourceId: "58AM68", category: "ウイルス", 
+                question: "RNAとDNAのいずれかのみを有するのはどれか。２つ選べ。", 
+                options: ["1. ウイルス", "2. クラミジア", "3. リケッチア", "4. マイコプラズマ", "5. バクテリオファージ"], 
+                correctIndices: [0, 4], // 1.ウイルス と 5.ファージ が正解
+                explanation: "【正解: 1, 5】\nDNAかRNAの片方しか持たないのがウイルス（およびファージ）の定義です。" 
+            },
+            { 
+                id: 106, sourceId: "64PM69", category: "らせん・微好気", 
+                question: "らせん菌に分類されるのはどれか。", 
+                options: ["1. Acinetobacter baumannii", "2. Bordetella pertussis", "3. Campylobacter jejuni", "4. Fusobacterium nucleatum", "5. Legionella pneumophila"], 
+                correctIndices: [2], 
+                explanation: "【正解: 3】\nCampylobacterはらせん菌です。" 
+            },
+            { 
+                id: 107, sourceId: "66PM68", category: "総論（構造）", 
+                question: "Gram陰性菌の菌体でリポ多糖体（LPS）からなるのはどれか。", 
+                options: ["1. 外 膜", "2. 細胞壁", "3. 細胞膜", "4. ペリプラズム", "5. ポーリン蛋白"], 
+                correctIndices: [0], 
+                explanation: "【正解: 1】\n外膜の外側はLPSで構成されています。" 
+            },
+            { 
+                id: 108, sourceId: "63PM68", category: "総論（構造）", 
+                question: "グラム陽性菌とグラム陰性菌に共通する細胞壁の構成成分はどれか。", 
+                options: ["1. タイコ酸", "2. リン脂質", "3. リポ多糖体", "4. ペプチドグリカン", "5. β-D-グルカン"], 
+                correctIndices: [3], 
+                explanation: "【正解: 4】\nペプチドグリカンはすべての細菌（マイコプラズマ除く）に共通します。" 
+            },
+            { 
+                id: 109, sourceId: "64AM69", category: "総論（構造）", 
+                question: "細菌の構造について正しいのはどれか。", 
+                options: ["1. 核膜が存在する", "2. ミトコンドリアが存在する", "3. 外膜はグラム陽性菌にある", "4. タイコ酸はグラム陰性菌にある", "5. ペプチドグリカンは細胞壁成分である"], 
+                correctIndices: [4], 
+                explanation: "【正解: 5】\nペプチドグリカンは細菌の細胞壁の主成分です。" 
+            },
+            { 
+                id: 110, sourceId: "60AM72", category: "総論（構造）", 
+                question: "細菌の細胞膜の内側にあるのはどれか。２つ選べ。", 
+                options: ["1. 莢 膜", "2. 外 膜", "3. ポーリン", "4. プラスミド", "5. リボソーム"], 
+                correctIndices: [3, 4], // 4.プラスミド と 5.リボソーム が正解
+                explanation: "【正解: 4, 5】\n細胞質にあるのは、4. プラスミドと 5. リボソームです。" 
+            },
+// ▼▼▼ 今回の追加データ (10問) ▼▼▼
+    { 
+        id: 111, sourceId: "58PM69", category: "総論（構造）", 
+        question: "芽胞を形成するのはどれか。２つ選べ。", 
+        options: ["1. Actinomyces israelii", "2. Bacillus cereus", "3. Clostridium difficile", "4. Mycobacterium tuberculosis", "5. Nocardia asteroides"], 
+        correctIndices: [1, 2], // 2.Bacillus と 3.Clostridium が正解
+        explanation: "【正解: 2, 3】\n芽胞を形成する代表的な細菌は、Bacillus属（好気性）とClostridium属（嫌気性）です。\n1, 4, 5はいずれも芽胞を形成しません。" 
+    },
+    { 
+        id: 112, sourceId: "65AM75", category: "マイコ/リケ/クラ", 
+        question: "ウイルスとマイコプラズマに共通する特徴はどれか。", 
+        options: ["1. 細胞壁をもたない", "2. 二分裂で増殖する", "3. 抗生物質に感受性がない", "4. 偏性細胞内寄生性である", "5. DNAとRNAのいずれか一方をもつ"], 
+        correctIndices: [0], 
+        explanation: "【正解: 1】\nウイルスは細胞構造（細胞壁含む）を持たず、マイコプラズマは細菌ですが細胞壁を欠く例外的な存在です。\n2. ウイルスは複製で増える\n3. マイコプラズマは一部の抗菌薬に有効\n5. マイコプラズマはDNAとRNA両方を持つ" 
+    },
+    { 
+        id: 113, sourceId: "61PM68", category: "マイコ/リケ/クラ", 
+        question: "偏性細胞内寄生体はどれか。", 
+        options: ["1. Bacillus anthracis", "2. Chlamydia trachomatis", "3. Legionella pneumophila", "4. Mycobacterium avium", "5. Yersinia pestis"], 
+        correctIndices: [1], 
+        explanation: "【正解: 2】\nクラミジア、リケッチア、ウイルスは、生きた細胞の中でしか増殖できない「偏性細胞内寄生体」です。\n3. レジオネラなどは「細胞内寄生性」を持ちますが、人工培地でも発育可能です（通性）。" 
+    },
+    { 
+        id: 114, sourceId: "62PM68", category: "マイコ/リケ/クラ", 
+        question: "ウイルスとクラミジアに共通する特徴はどれか。", 
+        options: ["1. 二分裂で増殖する", "2. リボソームを有する", "3. 抗生物質に感受性がある", "4. 光学顕微鏡で観察できる", "5. 増殖には生きた細胞が必要である"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\n両者とも「偏性細胞内寄生体」であり、増殖には生きた宿主細胞が必須です。\n1, 2, 3は細菌であるクラミジアのみの特徴です。" 
+    },
+    { 
+        id: 115, sourceId: "63AM68", category: "ウイルス", 
+        question: "ウイルスで正しいのはどれか。", 
+        options: ["1. 核膜がある", "2. 単細胞である", "3. 有糸分裂する", "4. プラスミドを有する", "5. 偏性細胞内寄生体である"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\nウイルスは細胞構造を持たず（非生物）、生きた細胞内でのみ増殖します。\n1〜4は、ウイルスには該当しない特徴です。" 
+    },
+    { 
+        id: 116, sourceId: "61PM69", category: "染色法", 
+        question: "Gram染色法について正しいのはどれか。", 
+        options: ["1. 芽胞はGram陽性に染まる", "2. 脱色にはLugol液を用いる", "3. サフラニンは対比染色に用いる", "4. エタノールでクリスタル紫を定着させる", "5. 細胞膜の違いを反映して細菌を染め分ける"], 
+        correctIndices: [2], 
+        explanation: "【正解: 3】\nサフラニン（またはフクシン）は、脱色されたグラム陰性菌を赤く染めるための対比染色液です。\n2. 脱色はアルコール\n4. 定着（媒染）はルゴール\n5. 細胞「壁」の違いを利用" 
+    },
+    { 
+        id: 117, sourceId: "64AM70", category: "染色法", 
+        question: "加温が必要な染色法はどれか。２つ選べ。", 
+        options: ["1. 墨汁法", "2. Wirtz法", "3. Neisser染色", "4. Ziehl-Neelsen染色", "5. Gram染色＜Huckerの変法＞"], 
+        correctIndices: [1, 3], // 2.Wirtz と 4.Z-N が正解
+        explanation: "【正解: 2, 4】\n2. 芽胞染色（Wirtz法）や、4. 抗酸菌染色（Ziehl-Neelsen法）は、色素を難染性の構造（芽胞膜やロウ様物質）に浸透させるために加温が必要です。" 
+    },
+    { 
+        id: 118, sourceId: "59AM71", category: "染色法", 
+        question: "細菌の形態と染色法の組合せで正しいのはどれか。", 
+        options: ["1. 異染小体 ―― Leifson法", "2. 芽 胞 ―― Wirtz法", "3. 莢 膜 ―― Grocott染色", "4. 抗酸菌 ―― Neisser染色", "5. 鞭 毛 ―― Hiss法"], 
+        correctIndices: [1], 
+        explanation: "【正解: 2】\nWirtz法（メラー変法など）は芽胞染色です。\n1. 異染小体＝Neisser染色\n3. 莢膜＝Hiss法、墨汁法\n4. 抗酸菌＝Ziehl-Neelsen法\n5. 鞭毛＝Leifson法" 
+    },
+    { 
+        id: 119, sourceId: "65PM71", category: "染色法", 
+        question: "染色法と目的菌の組合せで正しいのはどれか。２つ選べ。", 
+        options: ["1. 墨汁法 ―― Candida albicans", "2. Giménez染色 ―― Legionella pneumophila", "3. 芽胞染色 ―― Corynebacterium diphtheriae", "4. オーラミン染色 ―― Mycobacterium tuberculosis", "5. 異染小体染色 ―― Clostridioides difficile"], 
+        correctIndices: [1, 3], // 2.ヒメネス と 4.オーラミン が正解
+        explanation: "【正解: 2, 4】\n2. レジオネラはヒメネス染色で赤く染まります。\n4. 結核菌などの抗酸菌は蛍光染色（オーラミン法）で検出されます。\n1. 墨汁法＝Cryptococcus\n3. ジフテリア＝異染小体染色\n5. C.difficile＝芽胞染色" 
+    },
+    { 
+        id: 120, sourceId: "67PM73", category: "染色法", 
+        question: "染色法とその対象となる微生物の組合せで正しいのはどれか。２つ選べ。", 
+        options: ["1. 墨汁法 ―― Candida albicans", "2. KOH法 ―― Trichophyton rubrum", "3. Grocott染色 ―― Corynebacterium diphtheriae", "4. Giménez染色 ―― Legionella pneumophila", "5. Ziehl-Neelsen染色 ―― Mycoplasma pneumoniae"], 
+        correctIndices: [1, 3], // 2.KOH と 4.ヒメネス が正解
+        explanation: "【正解: 2, 4】\n2. 皮膚糸状菌（白癬菌など）はKOHで角質を溶解して観察します。\n4. レジオネラはヒメネス染色を用います。\n3. Grocott染色は真菌用です。" 
+    },
+// ▼▼▼ 今回の追加データ (12問) ▼▼▼
+    { 
+        id: 121, sourceId: "67AM75", category: "染色法", 
+        question: "目的菌と染色法の組合せで正しいのはどれか。", 
+        options: ["1. Bacillus属 ―― Hiss法", "2. Cryptococcus属 ―― Leifson染色", "3. Klebsiella属 ―― Wirtz法", "4. Nocardia属 ―― Kinyoun法", "5. Trichophyton属 ―― Neisser法"], 
+        correctIndices: [3], 
+        explanation: "【正解: 4】\nNocardia（ノカルジア）属は弱抗酸性を持つため、Kinyoun（キニヨン）法や変法抗酸菌染色で赤く染まります。\n1. 莢膜染色（Hiss法など）はKlebsiellaやCryptococcusに用います。\n2. Leifson法は鞭毛染色です。\n3. Wirtz法は芽胞染色です（Bacillusなど）。" 
+    },
+    { 
+        id: 122, sourceId: "68AM69", category: "染色法", 
+        question: "染色法と染色液の組合せで正しいのはどれか。", 
+        options: ["1. Hiss法 ―― マラカイト緑液", "2. Wirtz法 ―― 石炭酸フクシン液", "3. Gram染色 ―― パイフェル液", "4. Giménez染色 ―― ゲンチアナ紫液", "5. Ziehl-Neelsen染色 ―― サフラニン液"], 
+        correctIndices: [2], 
+        explanation: "【正解: 3】\nパイフェル液（石炭酸フクシン希釈液）は、Gram染色の対比染色（後染色）として、サフラニンの代わりに使用されることがあります。\n1. Hiss法（莢膜）は石炭酸フクシンやゲンチアナ紫を用います。\n2. Wirtz法（芽胞）はマラカイト緑を用います。\n5. Ziehl-Neelsen（抗酸菌）はメチレン青などで後染色します。" 
+    },
+    { 
+        id: 123, sourceId: "60AM75", category: "培地/性状", 
+        question: "人工培地に発育しないのはどれか。", 
+        options: ["1. Clostridium difficile", "2. Helicobacter pylori", "3. Legionella pneumophila", "4. Mycobacterium leprae", "5. Mycoplasma pneumoniae"], 
+        correctIndices: [3], 
+        explanation: "【正解: 4】\nらい菌（M. leprae）は人工培地で培養できず、アルマジロへの接種などで培養します。\n3. LegionellaはBCYEα寒天、5. MycoplasmaはPPLO培地で発育可能です。" 
+    },
+    { 
+        id: 124, sourceId: "67PM74", category: "培地", 
+        question: "検体の輸送を目的に使用する培地はどれか。", 
+        options: ["1. セレナイト培地", "2. Cary-Blair培地", "3. Skirrow寒天培地", "4. Thayer-Martin寒天培地", "5. 臨床用チオグリコレート培地"], 
+        correctIndices: [1], 
+        explanation: "【正解: 2】\nCary-Blair（キャリー・ブレア）培地は、赤痢菌やサルモネラなどの検体輸送（保存）培地です。\n1. サルモネラ用増菌培地\n3. カンピロバクター用選択分離\n4. 淋菌・髄膜炎菌用選択分離" 
+    },
+    { 
+        id: 125, sourceId: "61PM70", category: "培地", 
+        question: "培地と使用目的の組合せで正しいのはどれか。", 
+        options: ["1. GC寒天培地 ―― 検体輸送", "2. LIM培地 ―― 選択増菌", "3. PPLO培地 ―― 検体保存", "4. SS寒天培地 ―― 性状確認", "5. TCBS寒天培地 ―― 性状確認"], // ※元の問題に合わせて選択肢5を修正
+        correctIndices: [1], 
+        explanation: "【正解: 2】\nLIM培地はB群レンサ球菌（GBS）の選択増菌培地です。\n5. TCBS寒天培地はVibrioの「選択分離」培地です（※選択肢の重複回避のため文言を調整しています）。" 
+    },
+    { 
+        id: 126, sourceId: "69AM73", category: "培地", 
+        question: "培地と使用目的の組合せで正しいのはどれか。２つ選べ。", 
+        options: ["1. Bordet-Gengou培地 ―― 選択分離", "2. Cary-Blair培地 ―― 性状確認", "3. King A培地 ―― 検体輸送", "4. LIM培地 ―― 検体輸送", "5. Mueller-Hinton寒天培地 ―― 薬剤感受性検査"], // ※元の問題に合わせて選択肢4を修正
+        correctIndices: [0, 4], // 1と5が正解
+        explanation: "【正解: 1, 5】\n1. Bordet-Gengouは百日咳菌の分離培地です。\n5. Mueller-Hintonは薬剤感受性検査（ディスク法）の標準培地です。\n4. LIM培地は「選択増菌」です（※選択肢調整済み）。" 
+    },
+    { 
+        id: 127, sourceId: "66PM70", category: "培地", 
+        question: "選択物質として抗菌薬を含むのはどれか。２つ選べ。", 
+        options: ["1. SS 寒天培地", "2. TCBS 寒天培地", "3. Skirrow 寒天培地", "4. B-CYEα 寒天培地", "5. Thayer-Martin寒天培地"], 
+        correctIndices: [2, 4], // 3.Skirrow と 5.T-M が正解
+        explanation: "【正解: 3, 5】\n3. Skirrow培地（バンコマイシン、トリメトプリム、ポリミキシンB）\n5. Thayer-Martin培地（バンコマイシン、コリスチン、ナイスタチン）\nこれらは目的菌以外を抑制するために抗菌薬を含みます。SSやTCBSは胆汁酸塩などを利用します。" 
+    },
+    { 
+        id: 128, sourceId: "67AM69", category: "培地", 
+        question: "選択物質として胆汁酸を含む培地はどれか。２つ選べ。", 
+        options: ["1. SS寒天培地", "2. CCFA寒天培地", "3. TCBS寒天培地", "4. セレナイト培地", "5. Skirrow寒天培地"], 
+        correctIndices: [0, 2], // 1.SS と 3.TCBS が正解
+        explanation: "【正解: 1, 3】\nSS寒天培地とTCBS寒天培地は、胆汁酸塩を含み、グラム陽性菌などの発育を抑制します。" 
+    },
+    { 
+        id: 129, sourceId: "63AM70", category: "培地", 
+        question: "細菌と選択培地の組合せで正しいのはどれか。２つ選べ。", 
+        options: ["1. Bacteroides fragilis ―― CW寒天培地", "2. Clostridium difficile ―― CCFA寒天培地", "3. Enterococcus faecalis ―― Thayer-Martin 培地", "4. Pseudomonas aeruginosa ―― NAC寒天培地", "5. Salmonella Enteritidis ―― CIN寒天培地"], 
+        correctIndices: [1, 3], // 2.CCFA と 4.NAC が正解
+        explanation: "【正解: 2, 4】\n2. C.difficileはCCFA培地。\n4. 緑膿菌はNAC寒天培地。\n1. B.fragilisはBBE寒天培地を用います（CWは嫌気性菌全般用）。\n5. CINはYersinia用です。" 
+    },
+    { 
+        id: 130, sourceId: "65AM76", category: "培地", 
+        question: "目的菌と分離培地の組合せで正しいのはどれか。", 
+        options: ["1. Salmonella enterica ―― BBE 寒天培地", "2. Mycobacterium tuberculosis ―― Skirrow 寒天培地", "3. Legionella pneumophila ―― 5％ヒツジ血液寒天培地", "4. Bordetella pertussis ―― GC 寒天培地", "5. Clostridioides difficile ―― CCFA 寒天培地"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\nC. difficileはCCFA寒天培地で分離培養します。\n1. BBEはBacteroides。\n3. LegionellaはBCYEα（血液寒天には発育しない）。\n4. 百日咳菌はBordet-Gengou。" 
+    },
+    { 
+        id: 131, sourceId: "68AM76", category: "培地", 
+        question: "選択分離培地と目的の菌の組合せで正しいのはどれか。", 
+        options: ["1. CIN寒天培地 ―― Yersinia属", "2. DHL寒天培地 ―― Campylobacter属", "3. NAC寒天培地 ―― Shigella属", "4. Skirrow寒天培地 ―― Legionella属", "5. WYOα寒天培地 ―― Pseudomonas属"], 
+        correctIndices: [0], 
+        explanation: "【正解: 1】\nCIN寒天培地はYersinia enterocoliticaの選択分離培地です（ブルズアイコロニーを形成）。\n2. DHLは腸内細菌（サルモネラ・赤痢菌）。\n3. NACは緑膿菌。\n5. WYOはレジオネラ。" 
+    },
+    { 
+        id: 132, sourceId: "69PM77", category: "培地", 
+        question: "選択分離培地と目的菌の組合せで正しいのはどれか。２つ選べ。", 
+        options: ["1. BBE 寒天培地 ―― Neisseria meningitides", "2. CCFA 寒天培地 ―― Bacteroides fragilis", "3. CIN 寒天培地 ―― Yersinia enterocolitica", "4. NAC 寒天培地 ―― Pseudomonas aeruginosa", "5. Thayer-Martin寒天培地 ―― Clostridioides difficile"], 
+        correctIndices: [2, 3], // 3.CIN と 4.NAC が正解
+        explanation: "【正解: 3, 4】\n3. CINはYersinia。\n4. NACは緑膿菌。\n1. BBEはBacteroides。\n2. CCFAはC.difficile。\n5. Thayer-MartinはNeisseria（淋菌・髄膜炎菌）。" 
+    },
+// ▼▼▼ 追加データ修正版（ID: 133〜163） ▼▼▼
+    { 
+        id: 133, sourceId: "63PM70", category: "培養・発育環境", 
+        question: "発育に二酸化炭素が必須な細菌はどれか。", 
+        options: ["1. Bordetella pertussis", "2. Haemophilus influenzae", "3. Legionella pneumophila", "4. Neisseria gonorrhoeae", "5. Pseudomonas aeruginosa"], 
+        correctIndices: [3], 
+        explanation: "【正解: 4】\nNeisseria gonorrhoeae（淋菌）は発育に炭酸ガスを必要とします。" 
+    },
+    { 
+        id: 134, sourceId: "68PM72", category: "培養・発育環境", 
+        question: "5％炭酸ガス培養下のヒツジ血液寒天培地に発育するのはどれか。２つ選べ。", 
+        options: ["1. Fusobacterium nucleatum", "2. Haemophilus influenzae", "3. Legionella pneumophila", "4. Moraxella catarrhalis", "5. Streptococcus pneumoniae"], 
+        correctIndices: [3, 4], 
+        explanation: "【正解: 4, 5】\n4. モラクセラと 5. 肺炎球菌は血液寒天培地で発育します。" 
+    },
+    { 
+        id: 135, sourceId: "62AM70", category: "培地", 
+        question: "嫌気性菌用分離培地として用いられるのはどれか。", 
+        options: ["1. GC寒天培地", "2. B-CYE寒天培地", "3. Löffler〈レフレル〉培地", "4. 血液加ブルセラ寒天培地", "5. Sabouraud〈サブロー〉寒天培地"], 
+        correctIndices: [3], 
+        explanation: "【正解: 4】\n嫌気性菌分離には血液加ブルセラ寒天培地などが用いられます。" 
+    },
+    { 
+        id: 136, sourceId: "59AM73", category: "総論（遺伝）", 
+        question: "プラスミドで誤っているのはどれか。", 
+        options: ["1. 核内で複製する", "2. 環状のDNAである", "3. 接合によって伝達する", "4. 耐性因子の１つである", "5. 染色体から独立した遺伝体である"], 
+        correctIndices: [0], 
+        explanation: "【正解: 1】\n細菌には核がないため、プラスミドは細胞質内で複製されます。" 
+    },
+    { 
+        id: 137, sourceId: "67AM78", category: "総論（遺伝）", 
+        question: "プラスミドについて誤っているのはどれか。", 
+        options: ["1. 環状のDNAである", "2. 接合によって伝達する", "3. 耐性因子の１つである", "4. 染色体から独立した遺伝体である", "5. 細菌に感染するウイルスの総称である"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\n細菌に感染するウイルスはバクテリオファージです。" 
+    },
+    { 
+        id: 138, sourceId: "63PM71", category: "総論（遺伝）", 
+        question: "プラスミドで正しいのはどれか。２つ選べ。", 
+        options: ["1. RNAである", "2. 一本鎖である", "3. 細胞質内に存在する", "4. ウイルスの構成成分である", "5. 抗菌薬耐性の情報を伝達する"], 
+        correctIndices: [2, 4], 
+        explanation: "【正解: 3, 5】\nプラスミドは細胞質内の二本鎖DNAであり、耐性情報を伝達します。" 
+    },
+    { 
+        id: 139, sourceId: "62AM71", category: "総論（遺伝）", 
+        question: "細菌の遺伝物質について正しいのはどれか。", 
+        options: ["1. 染色体は核膜内にある", "2. プラスミドは一本鎖RNAである", "3. Fプラスミドは薬剤耐性遺伝子である", "4. Rプラスミドは接合によって伝達される", "5. 形質導入とはミトコンドリアDNAを介した現象である"], 
+        correctIndices: [3], 
+        explanation: "【正解: 4】\nRプラスミドは接合により伝達されます。" 
+    },
+    { 
+        id: 140, sourceId: "65PM75", category: "総論（遺伝）", 
+        question: "プラスミドによる耐性遺伝子の伝播に該当するのはどれか。", 
+        options: ["1. 形質転換", "2. 形質導入", "3. 抗原変異", "4. 接合伝達", "5. 非相同組換え"], 
+        correctIndices: [3], 
+        explanation: "【正解: 4】\nプラスミドの移動は接合伝達と呼ばれます。" 
+    },
+    { 
+        id: 141, sourceId: "66PM72", category: "総論（遺伝）", 
+        question: "バクテリオファージが起こす現象はどれか。", 
+        options: ["1. 形質転換", "2. 形質導入", "3. 接合伝達", "4. 突然変異", "5. DNA修復"], 
+        correctIndices: [1], 
+        explanation: "【正解: 2】\nファージによる遺伝子移動は形質導入です。" 
+    },
+    { 
+        id: 142, sourceId: "65AM73", category: "消毒・滅菌", 
+        question: "培地の滅菌に用いられる方法はどれか。２つ選べ。", 
+        options: ["1. ガス滅菌", "2. 乾熱滅菌", "3. 濾過滅菌", "4. 放射線滅菌", "5. 高圧蒸気滅菌"], 
+        correctIndices: [2, 4], 
+        explanation: "【正解: 3, 5】\n通常は高圧蒸気滅菌、熱に弱い培地は濾過滅菌を用います。" 
+    },
+    { 
+        id: 143, sourceId: "67PM72", category: "消毒・滅菌", 
+        question: "121℃、20分間の加熱処理で感染性が失われないのはどれか。", 
+        options: ["1. 真 菌", "2. 芽胞菌", "3. ウイルス", "4. プリオン", "5. マイコプラズマ"], 
+        correctIndices: [3], 
+        explanation: "【正解: 4】\nプリオンは通常のオートクレーブ条件では不活化されません。" 
+    },
+    { 
+        id: 144, sourceId: "64AM71", category: "消毒・滅菌", 
+        question: "人体に使用できない消毒薬はどれか。", 
+        options: ["1. ポビドンヨード", "2. 消毒用エタノール", "3. グルタルアルデヒド", "4. 塩化ベンザルコニウム", "5. クロルヘキシジングルコン酸塩"], 
+        correctIndices: [2], 
+        explanation: "【正解: 3】\nグルタルアルデヒドは人体には使用禁忌です。" 
+    },
+    { 
+        id: 145, sourceId: "66PM74", category: "消毒・滅菌", 
+        question: "高水準消毒薬はどれか。２つ選べ。", 
+        options: ["1. 過酢酸", "2. クロルヘキシジン", "3. 消毒用エタノール", "4. グルタルアルデヒド", "5. 次亜塩素酸ナトリウム"], 
+        correctIndices: [0, 3], 
+        explanation: "【正解: 1, 4】\n高水準消毒薬はグルタルアルデヒド、過酢酸などです。" 
+    },
+    { 
+        id: 146, sourceId: "63AM69", category: "消毒・滅菌", 
+        question: "消毒用エタノールに対して抵抗性を示すのはどれか。２つ選べ。", 
+        options: ["1. ノロウイルス", "2. ロタウイルス", "3. Ｃ型肝炎ウイルス", "4. ヒト免疫不全ウイルス", "5. インフルエンザウイルス"], 
+        correctIndices: [0, 1], 
+        explanation: "【正解: 1, 2】\nノロやロタなどのノンエンベロープウイルスはアルコール抵抗性です。" 
+    },
+    { 
+        id: 147, sourceId: "67AM73", category: "消毒・滅菌", 
+        question: "消毒用エタノールに抵抗性を示すのはどれか。２つ選べ。", 
+        options: ["1. ノロウイルス", "2. Candida albicans", "3. Clostridium difficile", "4. Pseudomonas aeruginosa", "5. Staphylococcus aureus"], 
+        correctIndices: [0, 2], 
+        explanation: "【正解: 1, 3】\nノロウイルスと、芽胞形成菌であるC. difficileはアルコール無効です。" 
+    },
+    { 
+        id: 148, sourceId: "62AM71", category: "消毒・滅菌", 
+        question: "微生物と有効な消毒薬の組合せで正しいのはどれか。２つ選べ。", 
+        options: ["1. 酵母 ―― 次亜塩素酸ナトリウム", "2. 糸状菌 ―― クロルヘキシジン", "3. 結核菌 ―― ポビドンヨード", "4. ウイルス ―― 両性界面活性剤", "5. 有芽胞菌 ―― 70％アルコール"], 
+        correctIndices: [0, 2], 
+        explanation: "【正解: 1, 3】\n次亜塩素酸Naは真菌に有効、ポビドンヨードは結核菌に有効です。" 
+    },
+    { 
+        id: 149, sourceId: "60AM77", category: "消毒・滅菌", 
+        question: "B型肝炎ウイルスの消毒薬として効果があるのはどれか。２つ選べ。", 
+        options: ["1. フェノール", "2. ポビドンヨード", "3. ホルムアルデヒド", "4. 次亜塩素酸ナトリウム", "5. グルコン酸クロルヘキシジン"], 
+        correctIndices: [3, 4], 
+        explanation: "【正解: 3, 4】\nHBVには次亜塩素酸ナトリウムやアルデヒド系が有効です。" 
+    },
+    { 
+        id: 150, sourceId: "61PM77", category: "消毒・滅菌", 
+        question: "ノロウイルスの消毒薬として使用するのはどれか。", 
+        options: ["1. クレゾール", "2. フェノール", "3. 70％エタノール", "4. 両性界面活性剤", "5. 次亜塩素酸ナトリウム"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\nノロウイルスには次亜塩素酸ナトリウムが第一選択です。" 
+    },
+    { 
+        id: 151, sourceId: "65PM68", category: "抗菌薬", 
+        question: "作用機序が細胞壁合成阻害によるのはどれか。２つ選べ。", 
+        options: ["1. アンピシリン", "2. ゲンタマイシン", "3. ミノサイクリン", "4. シプロフロキサシン", "5. バンコマイシン"], 
+        correctIndices: [0, 4], 
+        explanation: "【正解: 1, 5】\n細胞壁合成阻害はβ-ラクタム系とグリコペプチド系です。" 
+    },
+    { 
+        id: 152, sourceId: "64PM71", category: "抗菌薬", 
+        question: "細胞壁合成阻害薬はどれか。", 
+        options: ["1. アミカシン", "2. イミペネム", "3. ポリミキシンB", "4. ミノサイクリン", "5. リファンピシン"], 
+        correctIndices: [1], 
+        explanation: "【正解: 2】\nイミペネム（カルバペネム系）は細胞壁合成を阻害します。" 
+    },
+    { 
+        id: 153, sourceId: "69PM75", category: "抗菌薬", 
+        question: "蛋白合成阻害薬はどれか。２つ選べ。", 
+        options: ["1. アミカシン", "2. ダプトマイシン", "3. バンコマイシン", "4. ミノサイクリン", "5. シプロフロキサシン"], 
+        correctIndices: [0, 3], 
+        explanation: "【正解: 1, 4】\nアミカシンとミノサイクリンはタンパク合成を阻害します。" 
+    },
+    { 
+        id: 154, sourceId: "63AM72", category: "抗菌薬", 
+        question: "作用機序と抗菌薬の組合せで正しいのはどれか。", 
+        options: ["1. 細胞質膜障害 ―― アミノグリコシド系", "2. 核酸合成阻害 ―― グリコペプチド系", "3. 蛋白合成阻害 ―― テトラサイクリン系", "4. 葉酸合成阻害 ―― β-ラクタム系", "5. 細胞壁合成阻害 ―― キノロン系"], 
+        correctIndices: [2], 
+        explanation: "【正解: 3】\nテトラサイクリン系はタンパク合成阻害薬です。" 
+    },
+    { 
+        id: 155, sourceId: "66PM73", category: "抗菌薬", 
+        question: "作用機序が核酸合成阻害によるのはどれか。", 
+        options: ["1. イミペネム", "2. エリスロマイシン", "3. ゲンタマイシン", "4. バンコマイシン", "5. レボフロキサシン"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\nキノロン系（レボフロキサシン）はDNA合成を阻害します。" 
+    },
+    { 
+        id: 156, sourceId: "61AM71", category: "耐性菌", 
+        question: "β-ラクタム系抗菌薬に対する細菌の耐性機序として正しいのはどれか。２つ選べ。", 
+        options: ["1. リボソームの変化", "2. 核酸合成酵素の変化", "3. リン酸化による不活化", "4. 加水分解酵素による不活化", "5. ペニシリン結合蛋白〈PBP〉の変化"], 
+        correctIndices: [3, 4], 
+        explanation: "【正解: 4, 5】\n分解酵素（β-ラクタマーゼ）産生と、標的（PBP）の変化が主な機序です。" 
+    },
+    { 
+        id: 157, sourceId: "66PM78", category: "耐性菌", 
+        question: "β-ラクタマーゼ分類でクラスBに属するのはどれか。", 
+        options: ["1. ペニシリナーゼ", "2. オキサシリナーゼ", "3. セファロスポリナーゼ", "4. メタロ-β-ラクタマーゼ", "5. 基質拡張型β-ラクタマーゼ"], 
+        correctIndices: [3], 
+        explanation: "【正解: 4】\nクラスBはメタロ-β-ラクタマーゼです。" 
+    },
+    { 
+        id: 158, sourceId: "69AM71", category: "耐性菌", 
+        question: "カルバペネム系抗菌薬が有効なのはどれか。", 
+        options: ["1. メチシリン耐性黄色ブドウ球菌〈MRSA〉", "2. バンコマイシン耐性腸球菌〈VRE〉", "3. 多剤耐性緑膿菌〈MDRP〉", "4. 多剤耐性アシネトバクター〈MDRA〉", "5. 基質拡張型β-ラクタマーゼ〈ESBL〉産生大腸菌"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\nESBL産生菌にはカルバペネム系が有効です。" 
+    },
+    { 
+        id: 159, sourceId: "68PM74", category: "耐性菌", 
+        question: "多剤耐性緑膿菌〈MDRP〉の判定に使用される抗菌薬はどれか。", 
+        options: ["1. イミペネム", "2. オキサシリン", "3. セフォキシチン", "4. テイコプラニン", "5. バンコマイシン"], 
+        correctIndices: [0], 
+        explanation: "【正解: 1】\nMDRPの判定基準にはイミペネムが含まれます。" 
+    },
+    { 
+        id: 160, sourceId: "67AM76", category: "耐性菌", 
+        question: "多剤耐性結核菌の判定に使用される抗菌薬はどれか。２つ選べ。", 
+        options: ["1. イソニアジド", "2. エタンブトール", "3. ストレプトマイシン", "4. ピラジナミド", "5. リファンピシン"], 
+        correctIndices: [0, 4], 
+        explanation: "【正解: 1, 5】\nイソニアジドとリファンピシンへの耐性で定義されます。" 
+    },
+    { 
+        id: 161, sourceId: "69AM69", category: "耐性菌", 
+        question: "多剤耐性結核菌の判定に用いないのはどれか。", 
+        options: ["1. アミカシン", "2. イソニアジド", "3. リファンピシン", "4. レボフロキサシン", "5. ストレプトマイシン"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\n定義に関係しないのはストレプトマイシンです（出典に基づく）。" 
+    },
+    { 
+        id: 162, sourceId: "68AM70", category: "抗菌薬", 
+        question: "β-ラクタム系抗菌薬でないのはどれか。", 
+        options: ["1. メロペネム", "2. セファゾリン", "3. ピペラシリン", "4. セフォタキシム", "5. レボフロキサシン"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\nレボフロキサシンはキノロン系です。" 
+    },
+    { 
+        id: 163, sourceId: "61PM71", category: "抗菌薬", 
+        question: "抗菌薬とその系統名の組合せで正しいのはどれか。２つ選べ。", 
+        options: ["1. クリンダマイシン ―― ペニシリン系", "2. ゲンタマイシン ―― アミノグリコシド系", "3. シプロフロキサシン ―― キノロン系", "4. セファゾリン ―― マクロライド系", "5. ミノサイクリン ―― セフェム系"], 
+        correctIndices: [1, 2], 
+        explanation: "【正解: 2, 3】\nゲンタマイシンはアミノグリコシド系、シプロフロキサシンはキノロン系です。" 
+    },
+// ▼▼▼ 今回の追加データ (45問: 抗菌薬・感染症・法規など) ▼▼▼
+    { 
+        id: 164, sourceId: "63AM71", category: "抗菌薬", 
+        question: "Pseudomonas aeruginosa に対して抗菌力を有するのはどれか。", 
+        options: ["1. アンピシリン", "2. イミペネム", "3. セファゾリン", "4. セフォタキシム", "5. セフメタゾール"], 
+        correctIndices: [1], 
+        explanation: "【正解: 2】\n緑膿菌（P. aeruginosa）に有効なのはカルバペネム系（イミペネムなど）、一部のセフェム系（セフタジジムなど）、ニューキノロン系などです。\n1, 3, 4, 5は緑膿菌には無効です（自然耐性）。" 
+    },
+    { 
+        id: 165, sourceId: "57PM71", category: "抗菌薬", 
+        question: "抗結核菌薬はどれか。２つ選べ。", 
+        options: ["1. エリスロマイシン", "2. テトラサイクリン", "3. ピラジナミド", "4. ミコナゾール", "5. リファンピシン"], 
+        correctIndices: [2, 4], // 3.PZA と 5.RFP が正解
+        explanation: "【正解: 3, 5】\n抗結核薬の一次薬は、イソニアジド(INH)、リファンピシン(RFP)、ピラジナミド(PZA)、エタンブトール(EB)、ストレプトマイシン(SM)です。" 
+    },
+    { 
+        id: 166, sourceId: "54AM76", category: "抗菌薬", 
+        question: "病原菌と抗菌薬との組合せで正しいのはどれか。", 
+        options: ["1. Escherichia coli ―― エリスロマイシン", "2. Klebsiella pneumoniae ―― アンピシリン", "3. MRSA ―― セファゾリン", "4. Streptoccus pyogenes ―― ペニシリンＧ", "5. Stenotrophomonas maltophilia ―― イミペネム"], 
+        correctIndices: [3], 
+        explanation: "【正解: 4】\n化膿レンサ球菌（S. pyogenes）にはペニシリンGが著効します（耐性菌は未だ報告されていません）。\n2. 肺炎桿菌はアンピシリン自然耐性。\n3. MRSAはβ-ラクタム無効。\n5. S.maltophiliaはカルバペネム（イミペネム）自然耐性。" 
+    },
+    { 
+        id: 167, sourceId: "53PM31", category: "抗菌薬", 
+        question: "抗ウイルス薬はどれか。", 
+        options: ["1. アシクロビル", "2. ピラジナミド", "3. フルコナゾール", "4. ホスホマイシン", "5. レボフロキサシン"], 
+        correctIndices: [0], 
+        explanation: "【正解: 1】\nアシクロビルは抗ヘルペスウイルス薬です。\n2. 抗結核薬\n3. 抗真菌薬\n4, 5. 抗菌薬" 
+    },
+    { 
+        id: 168, sourceId: "55PM78", category: "耐性菌", 
+        question: "MRSAで薬剤感受性試験の結果が「感性」であっても「耐性」と報告するのはどれか。", 
+        options: ["1. ST合剤", "2. アルベカシン", "3. セファゾリン", "4. ミノサイクリン", "5. レボフロキサシン"], 
+        correctIndices: [2], 
+        explanation: "【正解: 3】\nMRSA（メチシリン耐性黄色ブドウ球菌）は、PBP2'の獲得により、すべてのβ-ラクタム系（ペニシリン、セフェム、カルバペネムなど）に耐性とみなされます。試験管内で感性値が出ても、臨床効果は期待できないため「耐性」として報告します。" 
+    },
+    { 
+        id: 169, sourceId: "59PM75", category: "耐性菌", 
+        question: "髄液とその他の検査材料で感受性判定基準（感性、中間、耐性）が異なるのはどれか。", 
+        options: ["1. Escherichia coli", "2. Haemophilus influenzae", "3. Neisseria meningitidis", "4. Streptococcus agalactiae", "5. Streptococcus pneumoniae"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\n肺炎球菌（S. pneumoniae）のペニシリン感受性判定基準は、髄膜炎（髄液）と非髄膜炎（その他）で異なります（髄膜炎の方が基準が厳しい）。" 
+    },
+    { 
+        id: 170, sourceId: "59AM74", category: "耐性菌", 
+        question: "薬剤感受性検査に使用するのはどれか。", 
+        options: ["1. 普通寒天培地", "2. トリプティケースソイ寒天培地", "3. ハートインフュージョン寒天培地", "4. ブレインハートインフュージョン寒天培地", "5. Mueller-Hinton寒天培地"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\n薬剤感受性試験（ディスク法・微量液体希釈法）の標準培地は「ミューラー・ヒントン（Mueller-Hinton）培地」です。" 
+    },
+    { 
+        id: 171, sourceId: "56AM78", category: "抗菌薬", 
+        question: "細菌と薬剤感受性試験に用いる薬剤の組合せで正しいのはどれか。", 
+        options: ["1. Enterococcus faecalis ―― セファゾリン", "2. Escherichia coli ―― アンピシリン", "3. Haemophilus influenzae ―― ペニシリンＧ", "4. Klebsiella pneumoniae ―― エリスロマイシン", "5. Pseudomonas aeruginosa ―― バンコマイシン"], 
+        correctIndices: [1], 
+        explanation: "【正解: 2】\n大腸菌にはアンピシリンなどが用いられます。\n1. 腸球菌にセフェムは無効。\n3. インフルエンザ菌にPCGは不適（ABPCなどを使う）。\n5. 緑膿菌にバンコマイシン（グラム陽性菌用）は無効。" 
+    },
+    { 
+        id: 172, sourceId: "64AM72", category: "耐性菌", 
+        question: "基質拡張型β-ラクタマーゼ＜ESBL＞産生菌の薬剤感受性検査で感性を示す抗菌薬はどれか。", 
+        options: ["1. イミペネム", "2. セファゾリン", "3. アズトレオナム", "4. セフォタキシム", "5. ベンジルペニシリン＜ペニシリンG＞"], 
+        correctIndices: [0], 
+        explanation: "【正解: 1】\nESBL産生菌は多くのβ-ラクタム薬を分解しますが、カルバペネム系（イミペネム）やセファマイシン系は分解できず、有効（感性）です。" 
+    },
+    { 
+        id: 173, sourceId: "58AM72", category: "耐性菌", 
+        question: "β-ラクタマーゼ試験を実施する必要がないのはどれか。", 
+        options: ["1. Haemophilus influenzae", "2. Moraxella catarrhalis", "3. Neisseria gonorrhoeae", "4. Staphylococcus aureus", "5. Streptococcus pneumoniae"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\n肺炎球菌のペニシリン耐性機序は「PBPの変異」であり、β-ラクタマーゼは産生しません。したがってβ-ラクタマーゼ試験は不要です。" 
+    },
+    { 
+        id: 174, sourceId: "67AM72", category: "抗菌薬", 
+        question: "血中濃度モニタリングが必要な抗菌薬はどれか。", 
+        options: ["1. ペニシリンG", "2. バンコマイシン", "3. エリスロマイシン", "4. テトラサイクリン", "5. レボフロキサシン"], 
+        correctIndices: [1], 
+        explanation: "【正解: 2】\nTDM（治療薬物モニタリング）が必要なのは、治療域と中毒域が近い薬剤です。代表的なものはバンコマイシン、アミノグリコシド系（ゲンタマイシン等）、テイコプラニンなどです。" 
+    },
+    { 
+        id: 175, sourceId: "69AM77", category: "抗菌薬", 
+        question: "血中薬物濃度測定による治療薬物モニタリング〈TDM〉の対象となるのはどれか。", 
+        options: ["1. アンピシリン", "2. イミペネム", "3. エリスロマイシン", "4. ゲンタマイシン", "5. セファゾリン"], 
+        correctIndices: [3], 
+        explanation: "【正解: 4】\nアミノグリコシド系（ゲンタマイシン、アミカシンなど）は、副作用（腎障害・聴力障害）回避と治療効果確保のためにTDMが必須です。" 
+    },
+    { 
+        id: 176, sourceId: "54PM71", category: "総論（分類）", 
+        question: "ヒトの定住性皮膚細菌叢を形成するのはどれか。", 
+        options: ["1. ナイセリア", "2. バクテロイデス", "3. プロピオニバクテリウム", "4. マイコプラズマ", "5. ラクトバシラス"], 
+        correctIndices: [2], 
+        explanation: "【正解: 3】\nPropionibacterium acnes（アクネ菌：現在はCutibacterium acnes）は、皮膚の毛穴や脂腺に常在する嫌気性菌です。" 
+    },
+    { 
+        id: 177, sourceId: "63PM72", category: "細菌各論", 
+        question: "細菌と毒素の組合せで正しいのはどれか。２つ選べ。", 
+        options: ["1. Clostridium botulinum ―― エンテロトキシン", "2. Shigella dysenteriae ―― 耐熱性溶血毒", "3. Staphylococcus aureus ―― 皮膚剥脱毒素", "4. Streptococcus pyogenes ―― 発赤毒素", "5. Vibrio parahaemolyticus ―― ベロ毒素"], 
+        correctIndices: [2, 3], // 3.剥脱毒素 と 4.発赤毒素(＝エリスロトキシン) が正解
+        explanation: "【正解: 3, 4】\n3. 黄色ブドウ球菌は皮膚剥脱毒素（エクスフォリアチン）を産生し、SSSSを起こします。\n4. 化膿レンサ球菌は発赤毒素（発熱性外毒素SPE）を産生し、猩紅熱を起こします。" 
+    },
+    { 
+        id: 178, sourceId: "69AM75", category: "細菌各論", 
+        question: "細菌と毒素の組合せで誤っているのはどれか。", 
+        options: ["1. Clostridium tetani ―― 神経毒素", "2. EHEC ―― ベロ毒素", "3. Staphylococcus aureus ―― エンテロトキシン", "4. Streptococcus pyogenes ―― 毒素性ショック症候群毒素", "5. Vibrio parahaemolyticus ―― 耐熱性溶血毒"], 
+        correctIndices: [3], 
+        explanation: "【正解: 4】\n毒素性ショック症候群毒素（TSST-1）を産生するのは「黄色ブドウ球菌（S. aureus）」です。\nS. pyogenesは「毒素性ショック様症候群（TSLS）」を起こしますが、原因毒素はSPE等です。" 
+    },
+    { 
+        id: 179, sourceId: "59AM70", category: "総論（構造）", 
+        question: "内毒素〈endotoxin〉活性の主成分となっている菌体の部位はどれか。", 
+        options: ["1. 外 膜", "2. 細胞質", "3. 核様体", "4. 細胞質膜", "5. ペプチドグリカン層"], 
+        correctIndices: [0], 
+        explanation: "【正解: 1】\n内毒素（エンドトキシン）の実体は、グラム陰性菌の「外膜」を構成するリポ多糖体（LPS）のLipid A部分です。" 
+    },
+    { 
+        id: 180, sourceId: "57PM74", category: "マイコ/リケ/クラ", 
+        question: "組合せで正しいのはどれか。", 
+        options: ["1. Mycoplasma hominis ―― 気管支炎", "2. Orientia tsutsugamushi ―― 日本紅斑熱", "3. Rickettsia prowazekii ―― 発疹チフス", "4. Treponema pallidum ―― 肺 炎", "5. Ureaplasma urealyticum ―― 腸 炎"], 
+        correctIndices: [2], 
+        explanation: "【正解: 3】\nRickettsia prowazekiiはコロモジラミ媒介で「発疹チフス」を起こします。\n2. ツツガムシ病\n4. 梅毒\n5. 非淋菌性尿道炎" 
+    },
+    { 
+        id: 181, sourceId: "58PM76", category: "感染制御", 
+        question: "ウイルスと侵入門戸の組合せで正しいのはどれか。２つ選べ。", 
+        options: ["1. ＥＢウイルス ―― 眼瞼結膜", "2. ポリオウイルス ―― 呼吸器粘膜", "3. デング熱ウイルス ―― 皮 膚", "4. Ｂ型肝炎ウイルス ―― 血 液", "5. ヒトパピローマウイルス ―― 消化器粘膜"], 
+        correctIndices: [2, 3], // 3.デング と 4.HBV が正解
+        explanation: "【正解: 3, 4】\n3. デング熱は蚊に刺されることで皮膚から侵入します。\n4. HBVは血液を介して感染します。\n1. EBは唾液（経口）。\n2. ポリオは経口（消化管）。" 
+    },
+    { 
+        id: 182, sourceId: "59AM77", category: "感染制御", 
+        question: "流行性角結膜炎の主な感染経路はどれか。", 
+        options: ["1. 空気感染", "2. 経口感染", "3. 血液感染", "4. 接触感染", "5. 飛沫感染"], 
+        correctIndices: [3], 
+        explanation: "【正解: 4】\nアデノウイルスによる流行性角結膜炎（はやり目）は、手指やタオルなどを介した「接触感染」が主です。" 
+    },
+    { 
+        id: 183, sourceId: "68AM71", category: "感染制御", 
+        question: "感染経路が空気感染である病原体はどれか。２つ選べ。", 
+        options: ["1. 麻疹ウイルス", "2. Mycobacterium tuberculosis", "3. Mycoplasma pneumoniae", "4. Neisseria meningitidis", "5. 風疹ウイルス"], 
+        correctIndices: [0, 1], // 1.麻疹 と 2.結核 が正解
+        explanation: "【正解: 1, 2】\n空気感染（飛沫核感染）するのは、結核菌、麻疹ウイルス、水痘ウイルスの3つが代表的です。" 
+    },
+    { 
+        id: 184, sourceId: "62AM73", category: "感染制御", 
+        question: "結核と同じ感染経路別予防策が必要な疾患はどれか。", 
+        options: ["1. 水 痘", "2. 梅 毒", "3. 風 疹", "4. コレラ", "5. デング熱"], 
+        correctIndices: [0], 
+        explanation: "【正解: 1】\n結核と同じ「空気予防策」が必要なのは、水痘と麻疹です。" 
+    },
+    { 
+        id: 185, sourceId: "65PM77", category: "感染制御", 
+        question: "インフルエンザウイルスの主な感染経路はどれか。２つ選べ。", 
+        options: ["1. 接触感染", "2. 飛沫感染", "3. 空気感染", "4. 血液感染", "5. 経口感染"], 
+        correctIndices: [0, 1], // 1.接触 と 2.飛沫 が正解
+        explanation: "【正解: 1, 2】\nインフルエンザは、咳やくしゃみによる「飛沫感染」と、汚染された手などを介する「接触感染」で広がります。" 
+    },
+    { 
+        id: 186, sourceId: "67PM68", category: "感染制御", 
+        question: "血液媒介感染を起こすのはどれか。２つ選べ。", 
+        options: ["1. RSウイルス", "2. アデノウイルス", "3. B型肝炎ウイルス", "4. インフルエンザウイルス", "5. ヒト免疫不全ウイルス〈HIV〉"], 
+        correctIndices: [2, 4], // 3.HBV と 5.HIV が正解
+        explanation: "【正解: 3, 5】\nHBV, HCV, HIVなどは血液や体液を介して感染します。" 
+    },
+    { 
+        id: 187, sourceId: "60PM69", category: "感染制御", 
+        question: "病原体と感染経路の組合せで正しいのはどれか。２つ選べ。", 
+        options: ["1. B型肝炎ウイルス ―― 空気感染", "2. Clostridium tetani ―― 経口感染", "3. 風疹ウイルス ―― 経胎盤感染", "4. Staphylococcus aureus ―― 接触感染", "5. Chlamydia trachomatis ―― 飛沫感染"], 
+        correctIndices: [2, 3], // 3.風疹-胎盤 と 4.黄色ブドウ-接触 が正解
+        explanation: "【正解: 3, 4】\n3. 妊婦が風疹に感染すると、胎盤を介して胎児に感染し、先天性風疹症候群を起こすことがあります。\n4. 黄色ブドウ球菌は接触感染の代表です。\n2. 破傷風は創傷感染です。" 
+    },
+    { 
+        id: 188, sourceId: "65PM70", category: "ウイルス", 
+        question: "経口感染する肝炎ウイルスはどれか。２つ選べ。", 
+        options: ["1. A 型", "2. B 型", "3. C 型", "4. D 型", "5. E 型"], 
+        correctIndices: [0, 4], // 1.A型 と 5.E型 が正解
+        explanation: "【正解: 1, 5】\nA型肝炎（HAV）とE型肝炎（HEV）は、汚染された水や食物を介して経口感染します（母音の肝炎は経口、と覚えます）。\nB, C, D型は血液・体液感染です。" 
+    },
+    { 
+        id: 189, sourceId: "64PM76", category: "ウイルス", 
+        question: "蚊が媒介するウイルス感染症はどれか。２つ選べ。", 
+        options: ["1. A型肝炎", "2. デング熱", "3. 日本脳炎", "4. ラッサ熱", "5. 伝染性紅斑"], 
+        correctIndices: [1, 2], // 2.デング と 3.日本脳炎 が正解
+        explanation: "【正解: 2, 3】\nデング熱（ネッタイシマカ等）と日本脳炎（コガタアカイエカ）は蚊が媒介します。" 
+    },
+    { 
+        id: 190, sourceId: "65PM69", category: "感染制御", 
+        question: "蚊が媒介するのはどれか。", 
+        options: ["1. Q 熱", "2. 黄 熱", "3. 回帰熱", "4. ライム病", "5. 日本紅斑熱"], 
+        correctIndices: [1], 
+        explanation: "【正解: 2】\n黄熱は蚊（ネッタイシマカ等）が媒介します。\n4. ライム病や 5. 紅斑熱はダニ、3. 回帰熱はシラミやダニです。" 
+    },
+    { 
+        id: 191, sourceId: "58PM73", category: "臨床", 
+        question: "健常人における市中肺炎の起因菌となり得るのはどれか。２つ選べ。", 
+        options: ["1. Burkholderia cepacia", "2. Haemophilus influenzae", "3. Mycoplasma pneumoniae", "4. Pneumocystis jirovecii", "5. Stenotrophomonas maltophilia"], 
+        correctIndices: [1, 2], // 2.インフルエンザ菌 と 3.マイコプラズマ が正解
+        explanation: "【正解: 2, 3】\n市中肺炎の代表的起因菌は、肺炎球菌、インフルエンザ菌、マイコプラズマ、クラミジアなどです。\n1, 4, 5は免疫不全者などに起こる日和見感染あるいは院内感染の原因菌です。" 
+    },
+    { 
+        id: 192, sourceId: "63AM73", category: "臨床", 
+        question: "日和見感染症はどれか。", 
+        options: ["1. 梅 毒", "2. オウム病", "3. 腸チフス", "4. 感染性心内膜炎", "5. ニューモシスチス肺炎"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\nニューモシスチス肺炎（PCP）は、HIV患者などの細胞性免疫能が低下した宿主に発症する代表的な日和見感染症です。" 
+    },
+    { 
+        id: 193, sourceId: "62AM74", category: "臨床", 
+        question: "長期入院患者が抗菌薬投与中に下痢を発症した。考えられる原因菌はどれか。", 
+        options: ["1. Bacillus cereus", "2. Clostridium difficile", "3. Clostridium perfringens", "4. Salmonella Typhimurium", "5. Shigella sonnei"], 
+        correctIndices: [1], 
+        explanation: "【正解: 2】\n抗菌薬投与による菌交代現象でC. difficileが異常増殖し、偽膜性大腸炎（下痢）を引き起こします（CDI）。" 
+    },
+    { 
+        id: 194, sourceId: "55AM72", category: "感染制御", 
+        question: "人畜共通感染症でないのはどれか。", 
+        options: ["1. アメーバ赤痢", "2. クリプトコッカス症", "3. パスツレラ症", "4. ラッサ熱", "5. 淋 病"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\n淋病（淋菌感染症）はヒトのみに感染する性感染症です。" 
+    },
+    { 
+        id: 195, sourceId: "55PM72", category: "感染制御", 
+        question: "新興感染症はどれか。２つ選べ。", 
+        options: ["1. 百日咳", "2. デング熱", "3. トキソプラズマ症", "4. 成人Ｔ細胞白血病", "5. 重症急性呼吸器症候群（SARS）"], 
+        correctIndices: [3, 4], // 4.ATL と 5.SARS が正解（※出題当時の基準）
+        explanation: "【正解: 4, 5】\n新興感染症とは「かつては知られていなかったが、近年新しく認識された感染症」です。SARS、エイズ、エボラ、ATLなどが含まれます。\n1, 2は再興感染症に含まれます。" 
+    },
+    { 
+        id: 196, sourceId: "53PM41", category: "感染制御", 
+        question: "再興感染症はどれか。", 
+        options: ["1. 結 核", "2. 赤 痢", "3. チフス", "4. ライム病", "5. 腸管出血性大腸菌感染症"], 
+        correctIndices: [0], 
+        explanation: "【正解: 1】\n再興感染症とは「既知の感染症で一時期減少したが、再び流行しているもの」です。結核、マラリア、デング熱などが代表です。" 
+    },
+    { 
+        id: 197, sourceId: "68AM77", category: "ウイルス", 
+        question: "腸管感染を起こすのはどれか。２つ選べ。", 
+        options: ["1. ウエストナイルウイルス", "2. エンテロウイルス", "3. デングウイルス", "4. ノロウイルス", "5. EBウイルス"], 
+        correctIndices: [1, 3], // 2.エンテロ と 4.ノロ が正解
+        explanation: "【正解: 2, 4】\nエンテロウイルス（ポリオ、コクサッキーなど）やノロウイルスは、消化管で増殖し、糞便中に排泄されます。" 
+    },
+    { 
+        id: 198, sourceId: "59PM76", category: "感染制御", 
+        question: "微生物を含むエアロゾルが発生する操作はどれか。２つ選べ。", 
+        options: ["1. 微生物検査用容器の輸送と保存", "2. 検査材料の遠沈", "3. 白金耳の火炎滅菌", "4. 分離培地のコロニー観察", "5. オートクレーブ終了後の使用済み培地の廃棄"], 
+        correctIndices: [1, 2], // 2.遠沈 と 3.火炎滅菌 が正解
+        explanation: "【正解: 2, 3】\n遠心分離機の回転・停止時や、白金耳についた菌を急に焼くとエアロゾル（微粒子）が発生し、吸入感染の危険があります。安全キャビネット内で操作する、白金耳乾燥器を使うなどの対策が必要です。" 
+    },
+    { 
+        id: 199, sourceId: "55PM71", category: "免疫・ワクチン", 
+        question: "生ワクチンを用いるのはどれか。", 
+        options: ["1. コレラ", "2. 破傷風", "3. 百日咳", "4. 風 疹", "5. B型肝炎"], 
+        correctIndices: [3], 
+        explanation: "【正解: 4】\n風疹、麻疹、水痘、ムンプス、BCGなどは生ワクチンです。\n2, 3は不活化（トキソイドや成分ワクチン）。" 
+    },
+    { 
+        id: 200, sourceId: "62PM73", category: "免疫・ワクチン", 
+        question: "不活化ワクチンが使用されるのはどれか。２つ選べ。", 
+        options: ["1. 風 疹", "2. 麻 疹", "3. Ｂ型肝炎", "4. インフルエンザ", "5. 流行性耳下腺炎"], 
+        correctIndices: [2, 3], // 3.HBV と 4.インフルエンザ が正解
+        explanation: "【正解: 3, 4】\nインフルエンザ、日本脳炎、B型肝炎、肺炎球菌などは不活化ワクチンです。" 
+    },
+    { 
+        id: 201, sourceId: "54PM72", category: "免疫・ワクチン", 
+        question: "予防接種でトキソイドを使用するのはどれか。２つ選べ。", 
+        options: ["1. インフルエンザ", "2. ジフテリア", "3. 日本脳炎", "4. 破傷風", "5. ペスト"], 
+        correctIndices: [1, 3], // 2.ジフテリア と 4.破傷風 が正解
+        explanation: "【正解: 2, 4】\nジフテリア（D）と破傷風（T）は、毒素を無毒化した「トキソイド」をワクチンとして用います（DPTワクチンなど）。" 
+    },
+    { 
+        id: 202, sourceId: "63PM77", category: "臨床", 
+        question: "ワクチン接種で予防可能な髄膜炎の原因菌ではないのはどれか。２つ選べ。", 
+        options: ["1. Escherichia coli", "2. Haemophilus influenzae", "3. Neisseria meningitidis", "4. Streptcoccus agalactiae", "5. Streptcoccus pneumoniae"], 
+        correctIndices: [0, 3], // 1.大腸菌 と 4.GBS が正解
+        explanation: "【正解: 1, 4】\n髄膜炎予防ワクチンがあるのは、2. インフルエンザ菌b型（Hib）、3. 髄膜炎菌、5. 肺炎球菌です。\n大腸菌やB群レンサ球菌（GBS）に対するワクチンは実用化されていません。" 
+    },
+    { 
+        id: 203, sourceId: "67AM74", category: "免疫・ワクチン", 
+        question: "ワクチンが開発されていないウイルスはどれか。", 
+        options: ["1. 風疹ウイルス", "2. 麻疹ウイルス", "3. C型肝炎ウイルス", "4. 水痘・帯状疱疹ウイルス", "5. インフルエンザウイルス"], 
+        correctIndices: [2], 
+        explanation: "【正解: 3】\nC型肝炎ウイルス（HCV）に対する有効なワクチンはまだ開発されていません（変異しやすいため）。" 
+    },
+    { 
+        id: 204, sourceId: "59AM78", category: "感染制御", 
+        question: "ウイルス感染症はどれか。２つ選べ。", 
+        options: ["1. 結 核", "2. 麻 疹", "3. ペスト", "4. ジフテリア", "5. 急性灰白髄炎〈ポリオ〉"], 
+        correctIndices: [1, 4], // 2.麻疹 と 5.ポリオ が正解
+        explanation: "【正解: 2, 5】\n1, 3, 4は細菌感染症です。\n2. 麻疹ウイルス\n5. ポリオウイルス" 
+    },
+    { 
+        id: 205, sourceId: "69AM74", category: "感染制御", 
+        question: "WHO が提唱している手指衛生のタイミングに含まれないのはどれか。", 
+        options: ["1. 無菌操作の前", "2. 患者に触れる前", "3. 患者に触れた後", "4. 患者周辺の物品に触れる前", "5. 体液に曝露された可能性のある場合"], 
+        correctIndices: [3], 
+        explanation: "【正解: 4】\nWHOの「手指衛生の5つのタイミング」は以下の通りです。\n1. 患者に触れる前\n2. 清潔/無菌操作の前\n3. 体液に曝露された可能性がある場合（その後）\n4. 患者に触れた後\n5. 患者周辺の物品に触れた「後」（前ではありません）" 
+    },
+    { 
+        id: 206, sourceId: "61PM72", category: "法規", 
+        question: "感染症法において一類感染症はどれか。", 
+        options: ["1. 日本脳炎", "2. ジフテリア", "3. エボラ出血熱", "4. 急性灰白髄炎", "5. 腎症候性出血熱"], 
+        correctIndices: [2], 
+        explanation: "【正解: 3】\n一類感染症はエボラ出血熱、クリミア・コンゴ出血熱、痘そう、南米出血熱、ペスト、マールブルグ病、ラッサ熱です（覚え方：えっ、クマラ、ペスト！）。" 
+    },
+    { 
+        id: 207, sourceId: "63PM73", category: "法規", 
+        question: "感染症法で三類感染症はどれか。", 
+        options: ["1. 結 核", "2. ペスト", "3. ジフテリア", "4. 重症急性呼吸器症候群", "5. 腸管出血性大腸菌感染症"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\n三類感染症は、腸管出血性大腸菌、赤痢、腸チフス・パラチフス、コレラです（集団食中毒をおこす消化器系）。\n1. 二類\n2. 一類\n3, 4. 二類" 
+    },
+    { 
+        id: 208, sourceId: "62PM78", category: "法規", 
+        question: "三類感染症の原因菌はどれか。２つ選べ。", 
+        options: ["1. Corynebacterium diphtheriae", "2. Mycobacterium tuberculosis", "3. Salmonella Typhi", "4. Vibrio cholerae", "5. Yersinia pestis"], 
+        correctIndices: [2, 3], // 3.チフス と 4.コレラ が正解
+        explanation: "【正解: 3, 4】\n3. 腸チフス、4. コレラは三類感染症です。\n1. ジフテリア（二類）\n2. 結核（二類）\n5. ペスト（一類）" 
+    },
+// ▼▼▼ 今回の追加データ (10問: 陽性球菌・鑑別試験など) ▼▼▼
+    { 
+        id: 209, sourceId: "61PM74", category: "陽性球菌", 
+        question: "Streptococcus pyogenesが産生する毒素はどれか。", 
+        options: ["1. 腸管毒素", "2. 神経毒素", "3. 発赤毒素", "4. 表皮剥離毒素", "5. 毒素性ショック症候群毒素"], 
+        correctIndices: [2], 
+        explanation: "【正解: 3】\n化膿レンサ球菌（S. pyogenes）は「発赤毒素（erythrogenic toxin）」を産生し、猩紅熱を引き起こします。\n1. 黄色ブドウ球菌など\n2. ボツリヌス菌など\n4. 黄色ブドウ球菌（SSSS）\n5. 黄色ブドウ球菌（TSST-1）" 
+    },
+    { 
+        id: 210, sourceId: "64PM68", category: "陽性球菌", 
+        question: "Staphylococcus aureus について正しいのはどれか。２つ選べ。", 
+        options: ["1. DNase 陰性である", "2. マンニット非分解である", "3. カタラーゼテスト陽性である", "4. 6.5％食塩加培地に発育しない", "5. コアグラーゼテスト陽性である"], 
+        correctIndices: [2, 4], // 3.カタラーゼ陽性 と 5.コアグラーゼ陽性 が正解
+        explanation: "【正解: 3, 5】\n黄色ブドウ球菌（S. aureus）は、カタラーゼ陽性、コアグラーゼ陽性、DNase陽性、マンニット分解、耐塩性あり（7.5%食塩で発育可）です。" 
+    },
+    { 
+        id: 211, sourceId: "64AM73", category: "陽性球菌", 
+        question: "Streptococcus 属について正しいのはどれか。２つ選べ。", 
+        options: ["1. S.mitis は胆汁溶解テスト陽性である", "2. S.pyogenes はLancefield のG群抗原を有する", "3. S.agalactiae は馬尿酸加水分解テスト陽性である", "4. S.pneumoniae はオプトヒン感受性テスト陽性である", "5. S.dysgalactiae subsp.equisimilis はCAMPテスト陽性である"], 
+        correctIndices: [2, 3], // 3.GBS-馬尿酸 と 4.肺炎球菌-オプトヒン が正解
+        explanation: "【正解: 3, 4】\n3. B群レンサ球菌（GBS）であるS. agalactiaeは馬尿酸加水分解陽性、CAMPテスト陽性です。\n4. 肺炎球菌はオプトヒン感性、胆汁溶解陽性です。\n1. S. mitisは陰性。\n2. S. pyogenesはA群。\n5. G群/C群レンサ球菌はCAMP陰性。" 
+    },
+    { 
+        id: 212, sourceId: "58PM72", category: "陽性球菌", 
+        question: "新生児髄膜炎患者の髄液からグラム陽性レンサ球菌が分離された。起因菌として考えられるのはどれか。", 
+        options: ["1. Enterococcus faecalis", "2. Peptococcus niger", "3. Peptostreptococcus anaerobius", "4. Staphylococcus epidermidis", "5. Streptococcus agalactiae"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\n新生児髄膜炎の主要な起因菌の一つは、B群レンサ球菌（GBS）であるS. agalactiaeです。産道感染により発症します。" 
+    },
+    { 
+        id: 213, sourceId: "60AM78", category: "耐性菌", 
+        question: "β-ラクタマーゼを産生しないのはどれか。", 
+        options: ["1. Klebsiella pneumoniae", "2. Moraxella catarrhalis", "3. Neisseria gonorrhoeae", "4. Stenotrophomonas maltophilia", "5. Streptococcus pneumoniae"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\n肺炎球菌（S. pneumoniae）のペニシリン耐性機序はPBPの変異であり、β-ラクタマーゼは産生しません。\n1, 2, 3, 4はいずれもβ-ラクタマーゼ産生菌が存在（または大多数）します。" 
+    },
+    { 
+        id: 214, sourceId: "55PM73", category: "陽性球菌", 
+        question: "Enterococcus faecalisで正しいのはどれか。２つ選べ。", 
+        options: ["1. グラム陰性球菌である", "2. CAMP試験陽性である", "3. アンピシリン感性である", "4. エスクリンを加水分解する", "5. ランスフィールド分類ではG群に属する"], 
+        correctIndices: [2, 3], // 3.ABPC感性 と 4.エスクリン分解 が正解
+        explanation: "【正解: 3, 4】\n腸球菌（E. faecalis）は、胆汁エスクリン培地でエスクリンを加水分解して黒変します。また、通常アンピシリンには感性です（VREを除く）。\n1. グラム陽性\n2. 陰性\n5. D群" 
+    },
+    { 
+        id: 215, sourceId: "56PM72", category: "陽性球菌", 
+        question: "胆汁溶解テスト陽性はどれか。", 
+        options: ["1. Enterococcus avium", "2. Enterococcus faecalis", "3. Streptococcus agalactiae", "4. Streptococcus mitis", "5. Streptococcus pneumoniae"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\n胆汁溶解テスト（胆汁酸溶解試験）は、肺炎球菌（陽性：溶けて透明になる）と、その他のα溶血レンサ球菌（陰性：混濁のまま）の鑑別に用います。" 
+    },
+    { 
+        id: 216, sourceId: "54PM78", category: "陽性球菌", 
+        question: "血液寒天培地で濃紫色の球菌（グラム陽性）。3%過酸化水素水で泡なし（カタラーゼ陰性）。6.5%NaClブイヨンで発育（混濁）。考えられる菌はどれか。", 
+        options: ["1. Branhamella catarrhalis", "2. Enterococcus faecalis", "3. Neisseria gonorrhoeae", "4. Staphylococcus epidermidis", "5. Streptococcus pyogenes"], 
+        correctIndices: [1], 
+        explanation: "【正解: 2】\nグラム陽性球菌、カタラーゼ陰性＝レンサ球菌の仲間。\nさらに「6.5%食塩耐性」があるのは腸球菌（Enterococcus）の特徴です。" 
+    },
+    { 
+        id: 217, sourceId: "57PM76", category: "陽性球菌", 
+        question: "血液寒天培地で濃紫色の球菌（グラム陽性）。3%過酸化水素水で激しく泡が発生（カタラーゼ陽性）。ウサギ血漿を凝固（コアグラーゼ陽性）。考えられるのはどれか。", 
+        options: ["1. Enterococcus faecalis", "2. Moraxella catarrhalis", "3. Neisseria gonorrhoeae", "4. Staphylococcus aureus", "5. Streptococcus agalactiae"], 
+        correctIndices: [3], 
+        explanation: "【正解: 4】\nグラム陽性球菌、カタラーゼ陽性＝ブドウ球菌。\nさらにコアグラーゼ陽性＝黄色ブドウ球菌（S. aureus）です。" 
+    },
+    { 
+        id: 218, sourceId: "60PM76", category: "陽性球菌", 
+        question: "脳脊髄液のGram染色で、グラム陽性の双球菌（ランセット状）が認められた。考えられる菌種はどれか。", 
+        options: ["1. Corynebacterium diphtheriae", "2. Haemophilus influenzae", "3. Neisseria meningitidis", "4. Staphylococcus aureus", "5. Streptococcus pneumoniae"], 
+        correctIndices: [4], // ※画像問題ですが、特徴的な形態の記述で代替可能と判断し、テキスト問題化しました。
+        explanation: "【正解: 5】\n肺炎球菌はグラム陽性の双球菌で、ランセット（短剣）状の形態を示し、厚い莢膜を持つのが特徴です。髄膜炎の起因菌となります。" 
+    },
+// ▼▼▼ 今回の追加データ (16問: 腸内細菌科など) ▼▼▼
+    { 
+        id: 219, sourceId: "53PM49", category: "腸内細菌", 
+        question: "腸内細菌科で正しいのはどれか。２つ選べ。", 
+        options: ["1. 芽胞をつくる", "2. 偏性嫌気性菌である", "3. ブドウ糖非発酵である", "4. 硝酸塩を亜硝酸塩へ還元する", "5. オキシダーゼ試験陰性である"], 
+        correctIndices: [3, 4], 
+        explanation: "【正解: 4, 5】\n腸内細菌科の定義的性状は、「グラム陰性桿菌」「通性嫌気性」「ブドウ糖発酵」「硝酸塩還元陽性」「オキシダーゼ陰性」です。\n1. 芽胞は形成しません。\n3. ブドウ糖を発酵します。" 
+    },
+    { 
+        id: 220, sourceId: "60PM70", category: "腸内細菌", 
+        question: "腸内細菌科の共通性状はどれか。", 
+        options: ["1. 運動性陽性", "2. 偏性好気性", "3. ブドウ糖発酵", "4. 硝酸塩還元テスト陰性", "5. オキシダーゼテスト陽性"], 
+        correctIndices: [2], 
+        explanation: "【正解: 3】\n腸内細菌科は必ずブドウ糖を発酵します。\n1. KlebsiellaやShigellaなど不動菌もいます。\n5. オキシダーゼは陰性です（陽性はVibrio, Pseudomonasなど）。" 
+    },
+    { 
+        id: 221, sourceId: "61PM78", category: "腸内細菌", 
+        question: "我が国における新生児髄膜炎の原因菌として頻度が高いのはどれか。", 
+        options: ["1. Cryptococcus neoformans", "2. Escherichia coli", "3. Haemophilus influenzae", "4. Neisseria meningitidis", "5. Streptococcus pneumoniae"], 
+        correctIndices: [1], 
+        explanation: "【正解: 2】\n新生児髄膜炎の二大起因菌は、B群レンサ球菌（GBS: S. agalactiae）と大腸菌（E. coli）です。特にK1抗原を持つ大腸菌が重要です。" 
+    },
+    { 
+        id: 222, sourceId: "66AM75", category: "腸内細菌", 
+        question: "Shigella sonneiが陽性を示すのはどれか。", 
+        options: ["1. IPAテスト", "2. ONPGテスト", "3. インドールテスト", "4. オキシダーゼテスト", "5. リジン脱炭酸テスト"], 
+        correctIndices: [1], 
+        explanation: "【正解: 2】\nソンネ赤痢菌（S. sonnei）は、β-ガラクトシダーゼを持ち、ONPGテスト陽性（乳糖遅分解）となるのが特徴です。\n他の赤痢菌（A, B, C群）は通常陰性です。" 
+    },
+    { 
+        id: 223, sourceId: "64PM73", category: "腸内細菌", 
+        question: "Salmonella enterica について正しいのはどれか。", 
+        options: ["1. S. Typhimurium は乳糖を分解する", "2. S. TyphiはTSI培地でガスを産生する", "3. S. Enteritidis はリジン脱炭酸反応陽性である", "4. S. enterica subsp. arizonae はONPGテスト陰性である", "5. S. Paratyphi A はシモンズのクエン酸塩培地に発育する"], 
+        correctIndices: [2], 
+        explanation: "【正解: 3】\n主要なサルモネラ（S. Enteritidis, S. Typhi, S. Typhimurium）はリジン脱炭酸（LDC）陽性です。\n1. 乳糖非分解。\n2. チフス菌はガス非産生。\n5. パラチフスA菌はクエン酸陰性、リジン陰性、H2S陰性が特徴。" 
+    },
+    { 
+        id: 224, sourceId: "68AM78", category: "腸内細菌", 
+        question: "IPA（フェニルアラニン脱アミノ）反応陽性を示すのはどれか。", 
+        options: ["1. Citrobacter freundii", "2. Escherichia coli", "3. Klebsiella oxytoca", "4. Morganella morganii", "5. Serratia marcescens"], 
+        correctIndices: [3], 
+        explanation: "【正解: 4】\nIPA（PPA）テスト陽性は、Proteus, Morganella, Providenciaの3菌属（Proteeae族）です。" 
+    },
+    { 
+        id: 225, sourceId: "69PM72", category: "腸内細菌", 
+        question: "肺炎が疑われた患者の喀痰分離菌はブドウ糖を発酵し、オキシダーゼ試験陰性、運動性陰性であった。考えられるのはどれか。", 
+        options: ["1. Acinetobacter baumannii", "2. Klebsiella pneumoniae", "3. Mycoplasma pneumoniae", "4. Pseudomonas aeruginosa", "5. Streptococcus pneumoniae"], 
+        correctIndices: [1], 
+        explanation: "【正解: 2】\nブドウ糖発酵・オキシダーゼ陰性＝腸内細菌科。\nその中で「運動性陰性」なのは、Klebsiella（肺炎桿菌）やShigellaです。\n1, 4. ブドウ糖非発酵。\n3. 培養不能（通常の寒天培地では）。\n5. カタラーゼ陰性のグラム陽性球菌。" 
+    },
+    { 
+        id: 226, sourceId: "60PM77", category: "腸内細菌", 
+        question: "腸内細菌科でリジン脱炭酸試験、インドールテスト及び運動性がすべて陽性であった。考えられるのはどれか。", 
+        options: ["1. Escherichia coli", "2. Klebsiella oxytoca", "3. Salmonella Typhi", "4. Serratia marcescens", "5. Shigella sonnei"], 
+        correctIndices: [0], 
+        explanation: "【正解: 1】\n大腸菌（E. coli）の典型的な性状は、リジン(+)、インドール(+)、運動性(+)、乳糖(+)、VP(-)です。\n2. 運動性(-)。\n3, 4. インドール(-)。\n5. 運動性(-)。" 
+    },
+    { 
+        id: 227, sourceId: "53PM39", category: "腸内細菌", 
+        question: "マッコンキー寒天培地でピンク色の集落（乳糖分解）を呈し、VP試験陽性であった。考えられるのはどれか。２つ選べ。", 
+        options: ["1. Proteus mirabilis", "2. Serratia marcescens", "3. Enterobacter cloacae", "4. Klebsiella pneumoniae", "5. Plesiomonas shigelloides"], 
+        correctIndices: [2, 3], // 3.Enterobacter と 4.Klebsiella が正解
+        explanation: "【正解: 3, 4】\n「乳糖分解（ピンクコロニー）」かつ「VP陽性」なのは、Klebsiella族（Klebsiella, Enterobacterなど）の特徴です。\n1, 2. 乳糖非分解（無色）。\n5. オキシダーゼ陽性。" 
+    },
+    { 
+        id: 228, sourceId: "57PM73", category: "腸内細菌", 
+        question: "35℃で運動性のあるのはどれか。２つ選べ。", 
+        options: ["1. Enterobacter cloacae", "2. Klebsiella pneumoniae", "3. Serratia marcescens", "4. Shigella dysenteriae", "5. Yersinia enterocolitica"], 
+        correctIndices: [0, 2], // 1.Enterobacter と 3.Serratia が正解
+        explanation: "【正解: 1, 3】\n腸内細菌科で「運動性陰性」の代表は、KlebsiellaとShigellaです。\nYersiniaは25℃で運動性あり、35℃では陰性となります。\nEnterobacterとSerratiaは35℃でも運動性があります。" 
+    },
+    { 
+        id: 229, sourceId: "53PM48", category: "腸内細菌", 
+        question: "正しい組合せはどれか。２つ選べ。", 
+        options: ["1. Escherichia coli ―― VP試験陽性", "2. Helicobacter pylori ―― 尿素分解試験陽性", "3. Klebsiella oxytoca ―― IPA試験陽性", "4. Proteus mirabilis ―― 硫化水素試験陽性", "5. Serratia marcescens ―― インドール試験陽性"], 
+        correctIndices: [1, 3], // 2.ピロリ-尿素 と 4.Proteus-H2S が正解
+        explanation: "【正解: 2, 4】\n2. ピロリ菌は強力なウレアーゼ活性を持ちます。\n4. ProteusはH2S陽性、IPA陽性、尿素陽性です。\n1. E.coliはVP陰性（MR陽性）。\n3. KlebsiellaはIPA陰性。\n5. Serratiaはインドール陰性。" 
+    },
+    { 
+        id: 230, sourceId: "69PM71", category: "腸内細菌", 
+        question: "Salmonella Typhi について正しいのはどれか。２つ選べ。", 
+        options: ["1. 乳糖を分解する", "2. インドールテストが陰性である", "3. リジン脱炭酸試験が陽性である", "4. オキシダーゼテストが陽性である", "5. TSI寒天培地でブドウ糖からのガスを産生する"], 
+        correctIndices: [1, 2], // 2.インドール陰性 と 3.LDC陽性 が正解
+        explanation: "【正解: 2, 3】\nチフス菌（S. Typhi）の特徴は、H2S陽性（黒変）、リジン陽性、インドール陰性、そして「ガス産生陰性」であることです（他のサルモネラはガス産生あり）。" 
+    },
+    { 
+        id: 231, sourceId: "62AM75", category: "腸内細菌", 
+        question: "Salmonella Typhiと Paratyphi A の鑑別に有用な検査はどれか。", 
+        options: ["1. 運動性テスト", "2. ONPGテスト", "3. インドールテスト", "4. クエン酸塩利用能", "5. リジン脱炭酸テスト"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\n最も重要な鑑別点はリジン脱炭酸（LDC）です。\nS. Typhi ＝ 陽性\nS. Paratyphi A ＝ 陰性\n（また、Paratyphi AはH2Sも陰性です）" 
+    },
+    { 
+        id: 232, sourceId: "61AM75", category: "腸内細菌", 
+        question: "Salmonella enterica と Citrobacter freundii を鑑別する性状はどれか。", 
+        options: ["1. VP反応", "2. 硫化水素産生", "3. インドール産生", "4. 乳糖・白糖分解能", "5. リジン脱炭酸反応"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\n両者ともH2Sを産生し、TSI高層部が黒変するため鑑別が必要です。\nSalmonella ＝ リジン陽性\nC. freundii ＝ リジン陰性" 
+    },
+    { 
+        id: 233, sourceId: "65AM71", category: "腸内細菌", 
+        question: "リジン脱炭酸反応陽性を示すのはどれか。", 
+        options: ["1. Citrobacter freundii", "2. Proteus mirabilis", "3. Salmonella Typhi", "4. Shigella sonnei", "5. Yersinia enterocolitica"], 
+        correctIndices: [2], 
+        explanation: "【正解: 3】\nSalmonella属はリジン陽性です。\n1, 2, 4, 5はリジン陰性です。" 
+    },
+    { 
+        id: 234, sourceId: "58AM78", category: "腸内細菌", 
+        question: "DNA分解酵素〈DNase〉検査で陽性となるのはどれか。", 
+        options: ["1. Citrobacter koseri", "2. Enterobacter cloacae", "3. Escherichia coli", "4. Klebsiella pneumoniae", "5. Serratia marcescens"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\nSerratia marcescensは、DNase陽性、ゼラチン液化陽性、リパーゼ陽性などが特徴的な性状です。" 
+    },
+ // ▼▼▼ 今回の追加データ (15問: ブドウ糖発酵・非発酵菌など) ▼▼▼
+    { 
+        id: 235, sourceId: "64AM74", category: "ブドウ糖発酵菌", 
+        question: "Vibrio 属でTCBS寒天培地に青緑色コロニーを形成するのはどれか。２つ選べ。", 
+        options: ["1. V.alginolyticus", "2. V.cholerae", "3. V.fluvialis", "4. V.mimicus", "5. V.parahaemolyticus"], 
+        correctIndices: [3, 4], // 4.mimicus と 5.腸炎ビブリオ が正解
+        explanation: "【正解: 4, 5】\nTCBS寒天培地で「青緑色（白糖非分解）」なのは、V. parahaemolyticus（腸炎ビブリオ）、V. mimicus、V. vulnificusなどです。\n1, 2, 3は白糖分解菌であり、黄色コロニーを形成します。" 
+    },
+    { 
+        id: 236, sourceId: "65AM78", category: "ブドウ糖発酵菌", 
+        question: "TCBS寒天培地で黄色コロニーを形成するVibrio属菌はどれか。２つ選べ。", 
+        options: ["1. V.cholerae", "2. V.fluvialis", "3. V.mimicus", "4. V.parahaemolyticus", "5. V.vulnificus"], 
+        correctIndices: [0, 1], // 1.コレラ と 2.fluvialis が正解
+        explanation: "【正解: 1, 2】\n白糖分解菌（黄色コロニー）は、V. cholerae（コレラ菌）、V. fluvialis、V. alginolyticusなどです。\n3, 4, 5は白糖非分解（青緑色）です。" 
+    },
+    { 
+        id: 237, sourceId: "55AM74", category: "ブドウ糖発酵菌", 
+        question: "Haemophilus influenzaeについて正しいのはどれか。", 
+        options: ["1. V因子のみ要求性", "2. ウマ血液寒天で溶血性", "3. オキシダーゼ試験陰性", "4. ポルフィリン試験陰性", "5. 偏性嫌気性菌"], 
+        correctIndices: [3], 
+        explanation: "【正解: 4】\nインフルエンザ菌はX因子とV因子の両方を要求するため、ヘミン生合成経路（ポルフィリン試験）は陰性です。\n1. X, V両方必要（VのみはH. parainfluenzae）。\n2. 非溶血性。\n3. オキシダーゼ陽性。\n5. 通性嫌気性。" 
+    },
+    { 
+        id: 238, sourceId: "67PM71", category: "ブドウ糖発酵菌", 
+        question: "多形性を示すGram陰性桿菌はどれか。", 
+        options: ["1. Escherichia coli", "2. Proteus mirabilis", "3. Haemophilus influenzae", "4. Legionella pneumophila", "5. Pseudomonas aeruginosa"], 
+        correctIndices: [2], 
+        explanation: "【正解: 3】\nインフルエンザ菌（Haemophilus influenzae）は、短桿菌〜長桿菌まで様々な形態をとる「多形性」が特徴です。" 
+    },
+    { 
+        id: 239, sourceId: "57AM73", category: "ブドウ糖発酵菌", 
+        question: "Haemophilus influenzaeについて誤っているのはどれか。", 
+        options: ["1. グラム陰性桿菌である", "2. 軟性下疳の原因菌になる", "3. 発育因子としてヘミンが必要である", "4. アンピシリン耐性菌が近年増加傾向にある", "5. 脳脊髄液から分離される株は莢膜b型が多い"], 
+        correctIndices: [1], 
+        explanation: "【正解: 2】\n軟性下疳の原因菌は「軟性下疳菌（Haemophilus ducreyi）」です。インフルエンザ菌ではありません。\n3. X因子（ヘミン）とV因子（NAD）が必要です。\n4. BLNARなどが増加しています。\n5. 髄膜炎起因菌はHib（b型）が主です。" 
+    },
+    { 
+        id: 240, sourceId: "59AM72", category: "ブドウ糖発酵菌", 
+        question: "衛星現象がみられるのはどれか。", 
+        options: ["1. Bordetella pertussis", "2. Haemophilus influenzae", "3. Legionella pneumophila", "4. Pseudomonas aeruginosa", "5. Streptococcus pneumoniae"], 
+        correctIndices: [1], 
+        explanation: "【正解: 2】\nインフルエンザ菌は、黄色ブドウ球菌の周囲で、球菌が産生するV因子を利用して大きなコロニーを形成する「衛星現象」を示します。" 
+    },
+    { 
+        id: 241, sourceId: "58PM74", category: "ブドウ糖非発酵菌", 
+        question: "緑膿菌が産生するのはどれか。", 
+        options: ["1. ピリミン", "2. ピオシアニン", "3. プロトヘミン", "4. プロジギオシン", "5. カロチノイド色素"], 
+        correctIndices: [1], 
+        explanation: "【正解: 2】\n緑膿菌（Pseudomonas aeruginosa）は、緑色の「ピオシアニン」や、黄緑色の「ピオベルディン」などの色素を産生します。\n4. 霊菌（Serratia）" 
+    },
+    { 
+        id: 242, sourceId: "65PM78", category: "ブドウ糖非発酵菌", 
+        question: "Pseudomonas aeruginosa で正しいのはどれか。", 
+        options: ["1. 4℃で発育する", "2. 周毛性鞭毛をもつ", "3. ブドウ糖を発酵する", "4. オキシダーゼ陰性である", "5. ピオシアニンを産生する"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\n緑膿菌はピオシアニン（緑色色素）を産生します。\n1. 42℃で発育可能（4℃はYersiniaやListeria）。\n2. 極単毛。\n3. ブドウ糖を「酸化（分解）」しますが「発酵」はしません。\n4. オキシダーゼ陽性。" 
+    },
+    { 
+        id: 243, sourceId: "66PM71", category: "ブドウ糖非発酵菌", 
+        question: "Pseudomonas aeruginosaについて正しいのはどれか。２つ選べ。", 
+        options: ["1. 鞭毛をもたない", "2. 硝酸塩を還元しない", "3. ピオシアニンを産生する", "4. TSI 培地の高層部が黄変する", "5. アシルアミダーゼ試験陽性である"], 
+        correctIndices: [2, 4], // 3.ピオシアニン と 5.アシルアミダーゼ が正解
+        explanation: "【正解: 3, 5】\n緑膿菌はアシルアミダーゼ陽性であり、類縁菌との鑑別に有用です。\n1. 極単毛を持つ。\n2. 硝酸塩還元陽性。\n4. ブドウ糖非発酵なので高層部は赤色のままです。" 
+    },
+    { 
+        id: 244, sourceId: "58AM75", category: "ブドウ糖非発酵菌", 
+        question: "Acinetobacter baumannii について誤っているのはどれか。", 
+        options: ["1. 運動性がある", "2. 偏性好気性である", "3. グルコースを分解する", "4. オキシダーゼ陰性である", "5. グラム陰性球桿菌である"], 
+        correctIndices: [0], 
+        explanation: "【正解: 1】\nAcinetobacter（不動菌）属は、その名の通り「運動性陰性」です。\n3. ブドウ糖を酸化（分解）する種（A. baumanniiなど）としない種があります。\n4. オキシダーゼ陰性が特徴です（Moraxellaとの鑑別点）。" 
+    },
+    { 
+        id: 245, sourceId: "63AM75", category: "ブドウ糖非発酵菌", 
+        question: "Legionella pneumophilaで正しいのはどれか。２つ選べ。", 
+        options: ["1. 偏性嫌気性菌である", "2. グラム陽性桿菌である", "3. 尿中抗原検査で検出できる", "4. β-ラクタマーゼを産生する", "5. 5％ヒツジ血液寒天培地に発育する"], 
+        correctIndices: [2, 3], // 3.尿中抗原 と 4.βラクタマーゼ が正解
+        explanation: "【正解: 3, 4】\nレジオネラは尿中抗原検査（血清型1型）が迅速診断に有用です。また、ほとんどの株がβ-ラクタマーゼを産生します。\n1. 好気性。\n2. グラム陰性。\n5. BCYEα寒天培地が必要（血液寒天には発育不可）。" 
+    },
+    { 
+        id: 246, sourceId: "68PM71", category: "染色法", 
+        question: "喀痰のGram染色で染まりにくいのはどれか。", 
+        options: ["1. Haemophilus influenzae", "2. Klebsiella pneumoniae", "3. Legionella pneumophila", "4. Moraxella catarrhalis", "5. Streptococcus pneumoniae"], 
+        correctIndices: [2], 
+        explanation: "【正解: 3】\nLegionella pneumophilaは通常のグラム染色（ハッカー変法など）では極めて染まりにくいため、ヒメネス染色や、時間をかけた染色が必要です。" 
+    },
+    { 
+        id: 247, sourceId: "69PM70", category: "ブドウ糖発酵菌", 
+        question: "ブドウ糖発酵菌はどれか。２つ選べ。", 
+        options: ["1. Aeromonas hydrophila", "2. Burkholderia cepacia", "3. Pseudomonas aeruginosa", "4. Stenotrophomonas maltophilia", "5. Yersinia pestis"], 
+        correctIndices: [0, 4], // 1.Aeromonas と 5.Yersinia が正解
+        explanation: "【正解: 1, 4】\n1. Aeromonas（エロモナス）属と 5. Yersinia（腸内細菌科）はブドウ糖を発酵します。\n2, 3, 4はブドウ糖非発酵グラム陰性桿菌（NF-GNR）です。" 
+    },
+    { 
+        id: 248, sourceId: "53PM38", category: "ブドウ糖発酵菌", 
+        question: "オキシダーゼテスト陽性のブドウ糖発酵グラム陰性桿菌はどれか。２つ選べ。", 
+        options: ["1. Vibrio cholerae", "2. Helicobacter pylori", "3. Pseudomonas cepacia", "4. Aeromonas hydrophila", "5. Yersinia enterocolitica"], 
+        correctIndices: [0, 3], // 1.Vibrio と 4.Aeromonas が正解
+        explanation: "【正解: 1, 4】\n「ブドウ糖発酵(+)」かつ「オキシダーゼ(+)」は、Vibrio科（Vibrio, Aeromonas, Plesiomonasなど）の特徴です。\n2. ブドウ糖非発酵（微好気）。\n3. 非発酵（現在はBurkholderia）。\n5. オキシダーゼ陰性（腸内細菌科）。" 
+    },
+    { 
+        id: 249, sourceId: "55AM73", category: "ブドウ糖発酵菌", 
+        question: "グラム陰性桿菌を分離した。TSI培地の高層部を黄変（ブドウ糖発酵）してガスの産生が見られたが黒変は観察されなかった。クエン酸塩陽性、オキシダーゼ陽性。考えられるのはどれか。", 
+        options: ["1. Aeromonas hydrophila", "2. Citrobacter freundii", "3. Klebsiella pneumoniae", "4. Plesiomonas shigelloides", "5. Pseudomonas aeruginosa"], 
+        correctIndices: [0], 
+        explanation: "【正解: 1】\nブドウ糖発酵・ガス産生(+)、オキシダーゼ(+)、クエン酸(+)の組み合わせは、Aeromonas hydrophilaに合致します。\n2, 3. オキシダーゼ陰性。\n4. ガス非産生、クエン酸陰性。\n5. ブドウ糖非発酵。" 
+    },
+// ▼▼▼ 今回の追加データ (14問: マイコ/リケ/クラ/スピロヘータなど) ▼▼▼
+    { 
+        id: 250, sourceId: "62PM68", category: "マイコ/リケ/クラ", 
+        question: "ウイルスとクラミジアに共通する特徴はどれか。", 
+        options: ["1. 二分裂で増殖する", "2. リボソームを有する", "3. 抗生物質に感受性がある", "4. 光学顕微鏡で観察できる", "5. 増殖には生きた細胞が必要である"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\n両者とも「偏性細胞内寄生体」であり、増殖には生きた宿主細胞が必須です。\n1, 2, 3, 4はクラミジア（細菌）のみの特徴です（ウイルスは二分裂せず、リボソームを持たず、抗菌薬無効、電子顕微鏡レベルの大きさです）。\n" 
+    },
+    { 
+        id: 251, sourceId: "58AM76", category: "マイコ/リケ/クラ", 
+        question: "Orientia tsutsugamushiについて正しいのはどれか。２つ選べ。", 
+        options: ["1. 尿中抗原検査で検出できる", "2. 培養には血液寒天培地を用いる", "3. 病原体はダニによって媒介される", "4. 治療にはテトラサイクリンを用いる", "5. 細胞壁にペプチドグリカンを有する"], 
+        correctIndices: [2, 3], // 3.ダニ と 4.テトラサイクリン が正解
+        explanation: "【正解: 3, 4】\nつつが虫病（Orientia tsutsugamushi）は、ツツガムシ（ダニの一種）によって媒介されます。治療にはテトラサイクリン系（ミノサイクリン等）が第一選択です。\n2. 人工培地には発育しません（細胞培養が必要）。\n5. Orientia属は細胞壁のペプチドグリカンを欠損しています（他のリケッチアとの違い）。" 
+    },
+    { 
+        id: 252, category: "マイコ/リケ/クラ", 
+        question: "マイコプラズマとウイルスの共通点はどれか。", 
+        options: ["1. 光学顕微鏡で観察できる", "2. 細胞壁を有する", "3. 細菌濾過器を通過できる", "4. 蛋白合成能がある", "5. 偏性細胞内寄生性である"], 
+        correctIndices: [2], 
+        explanation: "【正解: 3】\nマイコプラズマは細菌の中で最も小さく（0.2～0.3μm）、細菌濾過器（0.45μmフィルターなど）を通過できる点がウイルスと共通しています。\nまた、「細胞壁を持たない」点も共通しています。\n1, 4. マイコプラズマのみ。\n5. ウイルスのみ。" 
+    },
+    { 
+        id: 253, category: "マイコ/リケ/クラ", 
+        question: "Mycoplasma pneumoniaeについて誤っているのはどれか。", 
+        options: ["1. ブドウ糖を分解する", "2. 培養にはPPLO寒天培地を用いる", "3. 血球吸着能がある", "4. β-ラクタム系薬が有効である", "5. Guillain-Barré症候群を合併することがある"], 
+        correctIndices: [3], 
+        explanation: "【正解: 4】\nマイコプラズマは「細胞壁」を持たないため、細胞壁合成阻害薬であるβ-ラクタム系（ペニシリン、セフェムなど）は無効です。\nマクロライド系やテトラサイクリン系、キノロン系が用いられます。\n" 
+    },
+    { 
+        id: 254, category: "マイコ/リケ/クラ", 
+        question: "リケッチアについて正しいのはどれか。", 
+        options: ["1. 偏性細胞内寄生性である", "2. 媒介に節足動物は不要である", "3. Rickettsia prowazekiiは発疹熱の病原体である", "4. Orientia tsutsugamushiは日本紅斑熱の病原体である", "5. 治療にはβ-ラクタム系抗菌薬が用いられる"], 
+        correctIndices: [0], 
+        explanation: "【正解: 1】\nリケッチアは生きた細胞内でのみ増殖可能です。\n2. ダニ、シラミ、ノミなどが媒介します。\n3. 発疹チフスの病原体です（発疹熱はR. typhi）。\n4. つつが虫病の病原体です（日本紅斑熱はR. japonica）。\n5. テトラサイクリン系が有効です。" 
+    },
+    { 
+        id: 255, category: "マイコ/リケ/クラ", 
+        question: "節足動物が媒介するのはどれか。２つ選べ。", 
+        options: ["1. Chlamydophila psittaci", "2. Orientia tsutsugamushi", "3. Mycoplasma pneumoniae", "4. Rickettsia prowazekii", "5. Treponema pallidum"], 
+        correctIndices: [1, 3], // 2.Orientia と 4.R.prowazekii が正解
+        explanation: "【正解: 2, 4】\n2. ツツガムシ（ダニ）が媒介。\n4. コロモジラミが媒介。\n1. 鳥の糞などを吸入。\n3. 飛沫感染。\n5. 性行為感染。" 
+    },
+    { 
+        id: 256, category: "マイコ/リケ/クラ", 
+        question: "偏性細胞内寄生性を有するのはどれか。", 
+        options: ["1. Candida albicans", "2. Yersinia enterocolitica", "3. Mycobacterium tuberculosis", "4. Mycoplasma pneumoniae", "5. Chlamydia trachomatis"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\nクラミジア、リケッチア、ウイルスは、生きた細胞の中でしか増殖できない「偏性細胞内寄生体」です。\n4. マイコプラズマは人工培地（PPLO）で発育する「通性」です。" 
+    },
+    { 
+        id: 257, category: "マイコ/リケ/クラ", 
+        question: "リケッチアについて正しいのはどれか。", 
+        options: ["1. 治療にはβ-ラクタム薬が有効である", "2. 培養にはコルトフ培地を用いる", "3. 細胞壁にペプチドグリカンを含まない", "4. ヒトへの感染には節足動物（ベクター）が必要である", "5. グラム陽性の球桿状細菌である"], 
+        correctIndices: [3], 
+        explanation: "【正解: 4】\nリケッチア感染症は、ダニ・シラミ・ノミなどの節足動物が媒介します。\n1. 無効。\n2. コルトフはレプトスピラ。\n3. リケッチア属はペプチドグリカンを持ちます（Orientia属は欠損）。\n5. グラム陰性です。" 
+    },
+    { 
+        id: 258, category: "細菌各論", 
+        question: "病原体と疾患の組合せで正しいのはどれか。", 
+        options: ["1. Staphylococcus aureus ―― 感染性食中毒", "2. Burkholderia pseudomallei ―― 百日咳", "3. Chlamydophila pneumoniae ―― オウム病", "4. Rickettsia typhi ―― 発疹チフス", "5. Borrelia burgdorferi ―― ライム病"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\nBorrelia burgdorferiはマダニ媒介性のライム病の病原体です。\n1. 毒素型食中毒。\n2. 類鼻疽（百日咳はBordetella）。\n3. 肺炎（オウム病はC. psittaci）。\n4. 発疹熱（発疹チフスはR. prowazekii）。" 
+    },
+    { 
+        id: 259, category: "培養・発育環境", 
+        question: "人工培地に発育しないのはどれか。", 
+        options: ["1. Bacteroides fragilis", "2. Chlamydia trachomatis", "3. Finegoldia magna", "4. Leptospira interrogans", "5. Mycoplasma pneumoniae"], 
+        correctIndices: [1], 
+        explanation: "【正解: 2】\nクラミジアは偏性細胞内寄生体であり、人工培地では培養できません（細胞培養が必要）。\n4. レプトスピラはコルトフ培地などの人工培地で発育します。" 
+    },
+    { 
+        id: 260, category: "マイコ/リケ/クラ", 
+        question: "クラミジア科の特徴で誤っているのはどれか。", 
+        options: ["1. 細胞壁をもつ", "2. リボゾームをもつ", "3. 二分裂で増殖する", "4. DNAとRNAの両方をもつ", "5. エネルギー代謝機構をもつ"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\nクラミジアはATP産生系（エネルギー代謝系）を持たず、宿主細胞のATPを利用するため「エネルギー寄生体」と呼ばれます。" 
+    },
+    { 
+        id: 261, category: "マイコ/リケ/クラ", 
+        question: "正しいのはどれか。２つ選べ。", 
+        options: ["1. Borrelia burgdorferiの感染様式は飛沫感染である", "2. Chlamydia trachomatisは感染にベクターを必要とする", "3. Rickettsia prowazekiiはエネルギー産生代謝能をもつ", "4. Mycoplasma pneumoniaeは発育にコレステロールを要求する", "5. Leptospira interrogansは偏性細胞寄生性のため人工培地で培養できない"], 
+        correctIndices: [2, 3], // 3.リケッチアATP と 4.マイコステロール が正解
+        explanation: "【正解: 3, 4】\n3. リケッチアは独自のATP産生系（TCA回路など）を持ちますが、宿主からも奪います（クラミジアは完全に持たない）。\n4. マイコプラズマは細胞膜保持のためにコレステロール（ステロール）を要求します。\n1. ダニ媒介。\n2. 接触感染（性行為など）。\n5. 人工培地で培養可能。" 
+    },
+    { 
+        id: 262, category: "マイコ/リケ/クラ", 
+        question: "疾患と原因微生物の組合せで誤っているのはどれか。", 
+        options: ["1. Q熱 ―― Coxiella burnetii", "2. オウム病 ―― Chlamydophila psittaci", "3. ライム病 ―― Borrelia burgdorferi", "4. ワイル病 ―― Leptospira interrogans", "5. 発疹チフス ―― Rickettsia typhi"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\n発疹チフスの原因菌は「Rickettsia prowazekii」です。\nRickettsia typhiは「発疹熱」の原因菌です。" 
+    },
+    { 
+        id: 263, category: "マイコ/リケ/クラ", 
+        question: "媒介動物がコロモジラミであるのはどれか。", 
+        options: ["1. Orientia tsutsugamushi", "2. Rickettsia japonica", "3. Rickettsia prowazekii", "4. Rickettsia rickettsii", "5. Rickettsia typhi"], 
+        correctIndices: [2], 
+        explanation: "【正解: 3】\n発疹チフス菌（R. prowazekii）はコロモジラミによって媒介されます。\n1. ツツガムシ（ダニ）\n2. マダニ\n5. ノミ\n" 
+    },
+// ▼▼▼ 今回の追加データ (15問: 真菌) ▼▼▼
+    { 
+        id: 264, sourceId: "69AM72", category: "真菌", 
+        question: "真菌に分類されるのはどれか。２つ選べ。", 
+        options: ["1. Chlamydia trachomatis", "2. Cryptococcus neoformans", "3. Nocardia asteroides", "4. Pneumocystis jirovecii", "5. Treponema pallidum"], 
+        correctIndices: [1, 3], // 2.Cryptococcus と 4.Pneumocystis が正解
+        explanation: "【正解: 2, 4】\nCryptococcusは酵母様真菌、Pneumocystis jiroveciiはかつて原虫と考えられていましたが現在は真菌に分類されています。\n1. 細菌（クラミジア）\n3. 細菌（放線菌）\n5. 細菌（スピロヘータ）" 
+    },
+    { 
+        id: 265, sourceId: "60AM69", category: "真菌", 
+        question: "糸状菌はどれか。２つ選べ。", 
+        options: ["1. Aspergillus fumigatus", "2. Candida albicans", "3. Cryptococcus neoformans", "4. Trichophyton rubrum", "5. Trichosporon asahii"], 
+        correctIndices: [0, 3], // 1.Aspergillus と 4.Trichophyton が正解
+        explanation: "【正解: 1, 4】\nAspergillusとTrichophyton（白癬菌）は菌糸を形成する「糸状菌」です。\n2, 3, 5は酵母または酵母様真菌です。" 
+    },
+    { 
+        id: 266, sourceId: "58PM71", category: "真菌", 
+        question: "髄液の墨汁染色標本で厚膜胞子を持つ酵母様真菌が見られた。この病原体に有効なのはどれか。", 
+        options: ["1. アシクロビル", "2. アンピシリン", "3. ゲンタマイシン", "4. アムホテリシンＢ", "5. ストレプトマイシン"], 
+        correctIndices: [3], 
+        explanation: "【正解: 4】\n墨汁染色で莢膜が見えるのはCryptococcus neoformansです。真菌なので抗真菌薬であるアムホテリシンBが有効です。\n1. 抗ウイルス薬\n2, 3, 5. 抗菌薬" 
+    },
+    { 
+        id: 267, sourceId: "64AM75", category: "真菌", 
+        question: "大分生子を形成しないのはどれか。", 
+        options: ["1. Aspergillus fumigatus", "2. Epidermophyton floccosum", "3. Fusarium solani", "4. Microsporum canis", "5. Trichophyton rubrum"], 
+        correctIndices: [0], 
+        explanation: "【正解: 1】\nAspergillus属は、分生子頭（頂嚢・フィアライド・分生子）を形成しますが、「大分生子（Macroconidia）」という形態はとりません。\n2, 3, 4, 5は皮膚糸状菌やFusariumなどで、大分生子を形成します。" 
+    },
+    { 
+        id: 268, sourceId: "62AM76", category: "真菌", 
+        question: "皮膚糸状菌はどれか。", 
+        options: ["1. Aspergillus fumigatus", "2. Histoplasma capsulatum", "3. Mucor ramosissimus", "4. Sporothrix schenckii", "5. Trichophyton rubrum"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\nTrichophyton（白癬菌）、Microsporum（小胞子菌）、Epidermophyton（表皮菌）は皮膚糸状菌です。" 
+    },
+    { 
+        id: 269, sourceId: "55PM75", category: "真菌", 
+        question: "二形性真菌はどれか。", 
+        options: ["1. Aspergillus fumigatus", "2. Candida tropicalis", "3. Cryptococcus neoformans", "4. Microsporum canis", "5. Sporothrix schenckii"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\nSporothrix schenckii（スポロトリコーシス原因菌）は、生体内（37℃）では酵母形、自然界（25℃）では糸状菌形をとる「二形性真菌」です。" 
+    },
+    { 
+        id: 270, sourceId: "53PM33", category: "真菌", 
+        question: "酵母様真菌はどれか。２つ選べ。", 
+        options: ["1. Aspergillus niger", "2. Candida albicans", "3. Cryptococcus neoformans", "4. Mucor ramosissimus", "5. Trichophyton rubrum"], 
+        correctIndices: [1, 2], // 2.Candida と 3.Cryptococcus が正解
+        explanation: "【正解: 2, 3】\nCandidaとCryptococcusは単細胞（酵母様）で増殖します。\n1, 4, 5は糸状菌です。" 
+    },
+    { 
+        id: 271, sourceId: "57AM75", category: "真菌", 
+        question: "黒色真菌はどれか。２つ選べ。", 
+        options: ["1. Aspergillus spp.", "2. Cladosporium spp.", "3. Fonsecaea spp.", "4. Fusarium spp.", "5. Penicillium spp."], 
+        correctIndices: [1, 2], // 2.Cladosporium と 3.Fonsecaea が正解
+        explanation: "【正解: 2, 3】\n黒色真菌（デマチウム科）は、メラニン色素を産生し、コロニーが黒～オリーブ色になります。Fonsecaea, Cladosporium, Exophiala, Phialophoraなどが含まれます。" 
+    },
+    { 
+        id: 272, sourceId: "66PM76", category: "真菌", 
+        question: "細胞壁にメラニン色素を保有するのはどれか。", 
+        options: ["1. Aspergillus 属", "2. Epidermophyton 属", "3. Exophiala 属", "4. Penicillium 属", "5. Rhizopus 属"], 
+        correctIndices: [2], 
+        explanation: "【正解: 3】\nExophiala（エクソフィアラ）属は黒色真菌であり、細胞壁にメラニン色素を持ちます。" 
+    },
+    { 
+        id: 273, sourceId: "57PM75", category: "真菌", 
+        question: "真菌について正しいのはどれか。２つ選べ。", 
+        options: ["1. Aspergillus fumigatus は大分生子を作る", "2. Candida albicans は厚膜胞子を作る", "3. Candida glabrata は仮性菌糸を作る", "4. Sporothrix schenckii は二形性真菌である", "5. Trichophyton rubrum は莢膜を作る"], 
+        correctIndices: [1, 3], // 2.Candida厚膜胞子 と 4.Sporothrix二形性 が正解
+        explanation: "【正解: 2, 4】\n2. C. albicansはコーンミール寒天培地などで厚膜胞子（Chlamydospore）を形成します。\n4. Sporothrixは温度依存性の二形性を示します。\n1. 大分生子は作らない。\n3. C. glabrataは仮性菌糸を作らない（酵母のみ）。\n5. 莢膜を作るのはCryptococcus。" 
+    },
+    { 
+        id: 274, sourceId: "69PM73", category: "真菌", 
+        question: "真菌について正しいのはどれか。", 
+        options: ["1. Aspergillus fumigatus は大分生子を形成する", "2. Candida glabrata は仮性菌糸を形成する", "3. Cryptococcus neoformans は厚膜胞子を形成する", "4. Exophiala dermatitidis は黒色コロニーを形成する", "5. Mucor 属は菌糸に隔壁を形成する"], 
+        correctIndices: [3], 
+        explanation: "【正解: 4】\nExophialaは黒色真菌であり、黒色コロニーを形成します。\n1. 作らない。\n2. 作らない。\n3. 莢膜を形成する（厚膜胞子はCandida）。\n5. 接合菌（Mucor, Rhizopus）は原則として「隔壁なし」です。" 
+    },
+    { 
+        id: 275, sourceId: "61AM76", category: "真菌", 
+        question: "真菌とその性質の組合せで正しいのはどれか。２つ選べ。", 
+        options: ["1. Aspergillus fumigatus ―― 大分生子", "2. Candida albicans ―― 厚膜胞子", "3. Candida glabrata ―― 仮性菌糸", "4. Sporothrix schenckii ―― 二形性真菌", "5. Trichophyton rubrum ―― 莢 膜"], 
+        correctIndices: [1, 3], // 2.Candida-厚膜胞子 と 4.Sporothrix-二形性 が正解
+        explanation: "【正解: 2, 4】\n（解説はID:273と同様）\nC. albicansの厚膜胞子形成と、S. schenckiiの二形性は頻出ポイントです。" 
+    },
+    { 
+        id: 276, sourceId: "67PM76", category: "真菌", 
+        question: "真菌と特徴の組合せで正しいのはどれか。", 
+        options: ["1. Coccidioides immitis ―― 二形性真菌", "2. Cryptococcus neoformans ―― 糸状菌", "3. Fonsecaea pedrosoi ―― 皮膚糸状菌", "4. Microsporum canis ―― 黒色真菌", "5. Sporothrix schenckii ―― 酵母様真菌"], 
+        correctIndices: [0], 
+        explanation: "【正解: 1】\nCoccidioides immitis（コクシジオイデス症）は、輸入真菌症の原因となる二形性真菌です。\n2. 酵母様真菌。\n3. 黒色真菌（クロモミコーシス）。\n4. 皮膚糸状菌。\n5. 二形性真菌。" 
+    },
+    { 
+        id: 277, sourceId: "65AM74", category: "真菌", 
+        question: "輸入真菌症の原因菌はどれか。", 
+        options: ["1. Coccidioides immitis", "2. Exophiala dermatitidis", "3. Malassezia furfur", "4. Rhizopus arrhizus", "5. Sporothrix schenckii"], 
+        correctIndices: [0], 
+        explanation: "【正解: 1】\n輸入真菌症（日本に常在しない）には、コクシジオイデス症、ヒストプラズマ症、パラコクシジオイデス症などがあります。" 
+    },
+    { 
+        id: 278, sourceId: "63AM76", category: "真菌", 
+        question: "Candida属で仮性菌糸を形成しないのはどれか。", 
+        options: ["1. C. albicans", "2. C. glabrata", "3. C. krusei", "4. C. parapsilosis", "5. C. tropicalis"], 
+        correctIndices: [1], 
+        explanation: "【正解: 2】\nCandida glabrataは、カンジダ属の中で例外的に「仮性菌糸を形成しない」のが特徴です（小型の酵母のみ観察されます）。" 
+    },
+    { 
+        id: 279, sourceId: "62AM68", category: "真菌", 
+        question: "真菌に分類されているのはどれか。", 
+        options: ["1. Actinomyces israelii", "2. Bifidobacterium dentium", "3. Mycobacterium avium", "4. Nocardia asteroides", "5. Pneumocystis jirovecii"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\nPneumocystis jirovecii（ニューモシスチス肺炎の原因菌）は、遺伝子解析により真菌に分類されています。\n1, 2, 4は放線菌（細菌）、3は抗酸菌（細菌）です。" 
+    },
+// ▼▼▼ 今回の追加データ (22問: ウイルス・検査法など) ▼▼▼
+    { 
+        id: 280, sourceId: "63PM69", category: "ウイルス", 
+        question: "DNAウイルスはどれか。", 
+        options: ["1. 風疹ウイルス", "2. デングウイルス", "3. エボラウイルス", "4. A型肝炎ウイルス", "5. B型肝炎ウイルス"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\nB型肝炎ウイルス（HBV）はDNAウイルスです。\n1. トガ（RNA）\n2. フラビ（RNA）\n3. フィロ（RNA）\n4. ピコルナ（RNA）" 
+    },
+    { 
+        id: 281, sourceId: "61PM76", category: "ウイルス", 
+        question: "ヘルペスウイルス科に属するのはどれか。", 
+        options: ["1. B型肝炎ウイルス", "2. アデノウイルス", "3. 水痘・帯状疱疹ウイルス", "4. ヒトパピローマウイルス", "5. ヒトパルボウイルスB19"], 
+        correctIndices: [2], 
+        explanation: "【正解: 3】\n水痘・帯状疱疹ウイルス（VZV）はヘルペスウイルス科（HHV-3）です。\n1. ヘパドナ\n2. アデノ\n4. パピローマ\n5. パルボ" 
+    },
+    { 
+        id: 282, sourceId: "66AM73", category: "ウイルス", 
+        question: "手足口病の原因となるのはどれか。", 
+        options: ["1. RSウイルス", "2. アデノウイルス", "3. コクサッキーウイルス", "4. コロナウイルス", "5. パルボウイルス"], 
+        correctIndices: [2], 
+        explanation: "【正解: 3】\n手足口病の主な原因ウイルスは、コクサッキーウイルスA16、エンテロウイルス71などです。" 
+    },
+    { 
+        id: 283, sourceId: "65PM74", category: "ウイルス", 
+        question: "ウイルスと疾患の組合せで正しいのはどれか。2つ選べ。", 
+        options: ["1. EBウイルス ―― 伝染性単核球症", "2. ロタウイルス ―― 乳児嘔吐下痢症", "3. ポリオウイルス ―― 急性胃腸炎", "4. ヒトコロナウイルス ―― 流行性角結膜炎", "5. ヒトパルボウイルス ―― 手足口病"], 
+        correctIndices: [0, 1], // 1.EB-伝単 と 2.ロタ-下痢 が正解
+        explanation: "【正解: 1, 2】\n3. ポリオは急性灰白髄炎（小児麻痺）。\n4. アデノウイルスが流行性角結膜炎。\n5. パルボは伝染性紅斑（リンゴ病）。" 
+    },
+    { 
+        id: 284, sourceId: "69AM78", category: "ウイルス", 
+        question: "ウイルスと疾患の組合せで正しいのはどれか。", 
+        options: ["1. コクサッキーウイルス ―― 尿道炎", "2. サイトメガロウイルス ―― 手足口病", "3. デングウイルス ―― 肺 炎", "4. ヒトパルボウイルス ―― 伝染性紅斑", "5. ヒトRSウイルス ―― 脳 炎"], 
+        correctIndices: [3], 
+        explanation: "【正解: 4】\nヒトパルボウイルスB19は伝染性紅斑（リンゴ病）の原因です。\n1. ヘルパンギーナや手足口病など。\n2. 先天性巨細胞封入体症など。\n3. デング熱。\n5. 細気管支炎・肺炎。" 
+    },
+    { 
+        id: 285, sourceId: "68PM69", category: "ウイルス", 
+        question: "エンベロープを持つのはどれか。", 
+        options: ["1. ノロウイルス", "2. ロタウイルス", "3. アデノウイルス", "4. ポリオウイルス", "5. インフルエンザウイルス"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\nインフルエンザウイルスはエンベロープを持ちます（アルコール消毒有効）。\n1, 2, 3, 4はノンエンベロープウイルス（アルコール抵抗性）です。" 
+    },
+    { 
+        id: 286, sourceId: "61AM68", category: "ウイルス", 
+        question: "インフルエンザウイルスに認められるのはどれか。２つ選べ。", 
+        options: ["1. RNA", "2. カプシド", "3. リボソーム", "4. ミトコンドリア", "5. ペプチドグリカン層"], 
+        correctIndices: [0, 1], // 1.RNA と 2.カプシド が正解
+        explanation: "【正解: 1, 2】\nインフルエンザウイルスはRNAウイルスであり、核酸を包むタンパク質の殻（カプシド）を持ちます。\n3, 4, 5は細菌や真核生物の細胞小器官・構造物であり、ウイルスにはありません。" 
+    },
+    { 
+        id: 287, sourceId: "62PM76", category: "ウイルス", 
+        question: "ヒト免疫不全ウイルス＜HIV＞について正しいのはどれか。２つ選べ。", 
+        options: ["1. 逆転写酵素をもつ", "2. RNAウイルスである", "3. ワクチンが有効である", "4. エンベロープを保有しない", "5. CD8陽性T細胞に感染する"], 
+        correctIndices: [0, 1], // 1.逆転写 と 2.RNA が正解
+        explanation: "【正解: 1, 2】\nHIVはレトロウイルス科のRNAウイルスで、逆転写酵素を持ちます。\n3. ワクチンなし。\n4. エンベロープあり。\n5. CD4陽性T細胞に感染します。" 
+    },
+    { 
+        id: 288, sourceId: "66AM69", category: "ウイルス", 
+        question: "ヒト免疫不全ウイルス〈HIV〉について正しいのはどれか。２つ選べ。", 
+        options: ["1. 逆転写酵素をもつ", "2. 主な標的細胞はCD8陽性リンパ球である", "3. イムノクロマト法が確認検査として用いられる", "4. 医療従事者における感染経路には針刺しがある", "5. 治療にはノイラミニダーゼ阻害薬が有効である"], 
+        correctIndices: [0, 3], // 1.逆転写 と 4.針刺し が正解
+        explanation: "【正解: 1, 4】\n4. 血液媒介感染症であり、針刺し事故は主要なリスクです。\n2. CD4陽性細胞。\n3. 確認検査はウエスタンブロット法や核酸増幅法（NAT）。\n5. ノイラミニダーゼ阻害薬はインフルエンザ治療薬（HIVには逆転写酵素阻害薬など）。" 
+    },
+    { 
+        id: 289, sourceId: "68PM73", category: "感染制御", 
+        question: "血液培養の採血時に皮膚の消毒に用いるのはどれか。２つ選べ。", 
+        options: ["1. 過酢酸", "2. フタラール", "3. ポビドンヨード", "4. 次亜塩素酸ナトリウム", "5. グルコン酸クロルヘキシジンアルコール"], 
+        correctIndices: [2, 4], // 3.ポビドン と 5.クロルヘキシジン が正解
+        explanation: "【正解: 3, 4】\n血液培養の採血では、皮膚常在菌の混入を防ぐため、ポビドンヨードやグルコン酸クロルヘキシジンアルコールなどで厳重に消毒します（乾燥するまで待つのが重要）。" 
+    },
+    { 
+        id: 290, sourceId: "60PM78", category: "細菌検査", 
+        question: "Miller & Jones（喀痰の肉眼的品質評価）分類で、膿性部分が2/3 以上の痰はどれか。", 
+        options: ["1. M1", "2. M2", "3. P1", "4. P2", "5. P3"], 
+        correctIndices: [4], 
+        explanation: "【正解: 5】\nP3は「膿性部分が2/3以上」の良質な喀痰です。\nP1: 1/3未満、P2: 1/3〜2/3、M1: 粘液性、M2: 唾液混入。" 
+    },
+    { 
+        id: 291, sourceId: "64PM78", category: "細菌検査", 
+        question: "尿定量培養で、100倍希釈した尿を10μL接種した。コロニー数が何個あれば「10^5 cfu/mL」と判定されるか。", 
+        options: ["1. 1", "2. 10", "3. 100", "4. 1,000", "5. 10,000"], 
+        correctIndices: [1], 
+        explanation: "【正解: 2】\n接種量＝10μL（0.01mL）。希釈＝100倍。\n原尿1mLあたりの菌数 ＝ コロニー数 × (1/0.01) × 100 ＝ コロニー数 × 10,000。\n10^5 (100,000) になるには、コロニー数10個（10 × 10,000 ＝ 100,000）が必要です。" 
+    },
+    { 
+        id: 292, sourceId: "63PM78", category: "迅速検査", 
+        question: "イムノクロマト法による抗原検査が行われているのはどれか。２つ選べ。", 
+        options: ["1. RSウイルス", "2. EBウイルス", "3. 麻疹ウイルス", "4. ムンプスウイルス", "5. インフルエンザウイルス"], 
+        correctIndices: [0, 4], // 1.RS と 5.インフルエンザ が正解
+        explanation: "【正解: 1, 4】\nRSウイルス、インフルエンザ、アデノウイルス、ノロウイルス、A群レンサ球菌などは迅速キット（イムノクロマト法）が普及しています。\n2, 3, 4は通常、血清抗体価測定やPCR等で診断します。" 
+    },
+    { 
+        id: 293, sourceId: "67PM78", category: "迅速検査", 
+        question: "イムノクロマト法による抗原検査が行われているのはどれか。２つ選べ。", 
+        options: ["1. 風疹ウイルス", "2. 麻疹ウイルス", "3. アデノウイルス", "4. ムンプスウイルス", "5. インフルエンザウイルス"], 
+        correctIndices: [2, 4], // 3.アデノ と 5.インフルエンザ が正解
+        explanation: "【正解: 3, 4】\n（解説はID:292と同様）\nアデノウイルスも咽頭ぬぐい液や便での迅速検査が可能です。" 
+    },
+    { 
+        id: 294, sourceId: "64AM78", category: "迅速検査", 
+        question: "イムノクロマト法による尿中抗原検査が行われるのはどれか。２つ選べ。", 
+        options: ["1. Haemophilus influenzae", "2. Legionella pneumophila", "3. Neisseria meningitidis", "4. Streptococcus agalactiae", "5. Streptococcus pneumoniae"], 
+        correctIndices: [1, 4], // 2.レジオネラ と 5.肺炎球菌 が正解
+        explanation: "【正解: 2, 4】\n尿中抗原検査は「レジオネラ」と「肺炎球菌」の診断に非常に有用です（特異度が高い）。" 
+    },
+    { 
+        id: 295, sourceId: "54AM78", category: "細菌検査", 
+        question: "菌が検出された場合に異常と判定する検体はどれか。２つ選べ。", 
+        options: ["1. 喀 痰", "2. 血 液", "3. 髄 液", "4. 鼻 汁", "5. 糞 便"], 
+        correctIndices: [1, 2], // 2.血液 と 3.髄液 が正解
+        explanation: "【正解: 2, 3】\n血液や髄液は本来「無菌」の検体であり、菌が検出されれば感染症（敗血症、髄膜炎）と判定されます。\n1, 4, 5は常在菌が存在する部位です。" 
+    },
+    { 
+        id: 296, sourceId: "66AM71", category: "細菌検査", 
+        question: "血液培養から分離された場合、汚染菌（コンタミネーション）の可能性が高いのはどれか。２つ選べ。", 
+        options: ["1. Bacillus subtilis", "2. Escherichia coli", "3. Staphylococcus aureus", "4. Propionibacterium acnes", "5. Pseudomonas aeruginosa"], 
+        correctIndices: [0, 3], // 1.Bacillus と 4.P.acnes が正解
+        explanation: "【正解: 1, 4】\n皮膚常在菌であるBacillus種（炭疽菌除く）、CNS（表皮ブドウ球菌など）、Propionibacterium acnes、Corynebacterium種などが1セットのみ陽性の場合は、採血時の汚染（コンタミ）を疑います。\n2, 3, 5は真の起因菌である可能性が高いです。" 
+    },
+    { 
+        id: 297, sourceId: "69PM69", category: "細菌検査", 
+        question: "初尿を用いて検索を行うのはどれか。", 
+        options: ["1. Candida albicans", "2. Escherichia coli", "3. Neisseria gonorrhoeae", "4. Pseudomonas aeruginosa", "5. Streptococcus agalactiae"], 
+        correctIndices: [2], 
+        explanation: "【正解: 3】\n淋菌（N. gonorrhoeae）やクラミジアによる尿道炎を疑う場合は、菌が多く含まれる「初尿（出始めの尿）」を採取します。\n膀胱炎（E. coliなど）の場合は、汚染の少ない「中間尿」を用います。" 
+    },
+    { 
+        id: 298, sourceId: "66AM77", category: "感染制御", 
+        question: "直ちに医師への連絡（パニック値報告）が必要なのはどれか。２つ選べ。", 
+        options: ["1. 尿からEscherichia coliを検出", "2. 糞便からKlebsiella pneumoniaeを検出", "3. 髄液からCryptococcus neoformansを検出", "4. 皮膚からStaphylococcus epidermidisを検出", "5. 喀痰からMycobacterium tuberculosisを検出"], 
+        correctIndices: [2, 4], // 3.髄液クリプト と 5.喀痰結核 が正解
+        explanation: "【正解: 3, 5】\n3. 髄膜炎は致死的であり緊急治療が必要です。\n5. 結核は空気感染するため、直ちに隔離が必要です。\n1, 2, 4は常在菌あるいは通常の感染症であり、緊急性は相対的に低いです。" 
+    },
+    { 
+        id: 299, sourceId: "68PM70", category: "感染制御", 
+        question: "微生物検査結果について緊急報告が必要でないのはどれか。", 
+        options: ["1. 静脈血からEscherichia coliが検出された場合", "2. 髄液からCryptococcus neoformansが検出された場合", "3. 皮膚からStaphylococcus epidermidisが検出された場合", "4. 喀痰からMycobacterium tuberculosisが検出された場合", "5. 胸水からカルバペネム耐性腸内細菌科細菌が検出された場合"], 
+        correctIndices: [2], 
+        explanation: "【正解: 3】\n皮膚からの表皮ブドウ球菌（S. epidermidis）検出は、常在菌であるため通常は緊急報告不要です。\n1, 2, 5は無菌部位からの検出や耐性菌、4は結核（感染対策）であり、緊急報告対象です。" 
+    },
+    { 
+        id: 300, sourceId: "67PM70", category: "細菌検査", 
+        question: "検体と検出菌の組合せで汚染菌と解釈されるのはどれか。", 
+        options: ["1. 喀痰 ―― Streptococcus pneumoniae", "2. 血液 ―― Staphylococcus aureus", "3. 髄液 ―― Propionibacterium acnes", "4. 胆汁 ―― Klebsiella pneumoniae", "5. 中間尿 ―― Escherichia coli"], 
+        correctIndices: [2], 
+        explanation: "【正解: 3】\n髄液からPropionibacterium acnes（皮膚常在菌）が検出された場合、穿刺時の皮膚からのコンタミネーションである可能性が高いです（シャント感染などを除く）。\n他の組み合わせは代表的な起因菌です。" 
+    },
+    { 
+        id: 301, sourceId: "69PM74", category: "細菌検査", 
+        question: "検査が有用でないのはどれか。", 
+        options: ["1. 結核を疑う患者の喀痰抗酸菌培養検査", "2. 感染性心内膜炎を疑う患者の血液培養検査", "3. 尿路感染症を疑う患者の尿中レジオネラ抗原検査", "4. クリプトコックス髄膜炎を疑う患者の髄液中グルクロノキシロマンナン抗原検査", "5. 抗菌薬関連下痢症を疑う患者の糞便中Clostridioides difficileトキシン抗原検査"], 
+        correctIndices: [2], 
+        explanation: "【正解: 3】\n尿中レジオネラ抗原検査は「レジオネラ肺炎」の診断に用います。尿路感染症（膀胱炎など）の診断には使いません（レジオネラは尿路感染を起こしません）。" 
+    },
+
+        ];
+
 
         // --- PWA Service Worker 登録 ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('Service Worker Registered!', reg))
-                    .catch(err => console.log('Service Worker registration failed: ', err));
+                navigator.serviceWorker.register('./sw.js').catch(() => {});
             });
         }
 
-        // --- 状態管理 ---
+        // --- 状態管理変数 ---
         let currentQuizQueue = [];
         let currentIndex = 0;
         let score = 0;
-        // 間違えた問題IDの保存用キー
+        let currentSelectedIndices = []; // 現在選択中の選択肢（配列）
         const STORAGE_KEY = 'microbio_wrong_questions';
 
-        // --- DOM要素 ---
+        // --- DOM要素の取得 ---
         const startScreen = document.getElementById('start-screen');
         const quizScreen = document.getElementById('quiz-screen');
         const resultScreen = document.getElementById('result-screen');
         const categoryGrid = document.getElementById('category-grid');
         const reviewArea = document.getElementById('review-area');
         const wrongCountDisplay = document.getElementById('wrong-count');
-        
         const categoryBadge = document.getElementById('category-badge');
         const progressText = document.getElementById('progress-text');
         const questionText = document.getElementById('question-text');
@@ -222,12 +1650,11 @@
         const controlsContainer = document.getElementById('controls-container');
         const nextBtn = document.getElementById('next-btn');
 
-        // --- ローカルストレージ操作 ---
+        // --- ローカルストレージ操作（復習機能） ---
         function getWrongQuestions() {
             const stored = localStorage.getItem(STORAGE_KEY);
             return stored ? JSON.parse(stored) : [];
         }
-
         function addWrongQuestion(id) {
             const list = getWrongQuestions();
             if (!list.includes(id)) {
@@ -235,13 +1662,11 @@
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
             }
         }
-
         function removeWrongQuestion(id) {
             let list = getWrongQuestions();
             list = list.filter(itemId => itemId !== id);
             localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
         }
-
         function resetWrongQuestions() {
             if(confirm('間違えた問題の履歴を全て消去しますか？')) {
                 localStorage.removeItem(STORAGE_KEY);
@@ -251,7 +1676,7 @@
 
         // --- アプリ初期化 ---
         function initApp() {
-            // 間違えた問題の数をチェック
+            // 復習ボタンの制御
             const wrongIds = getWrongQuestions();
             if (wrongIds.length > 0) {
                 reviewArea.classList.remove('hidden');
@@ -261,49 +1686,49 @@
                 reviewArea.classList.add('hidden');
             }
 
-            // 分野ボタン生成
+            // 分野ボタンの生成
             const categories = [...new Set(fullQuizData.map(q => q.category))];
             categoryGrid.innerHTML = '';
             categories.forEach(cat => {
                 const btn = document.createElement('button');
                 btn.className = "bg-white border border-slate-200 hover:border-blue-400 hover:bg-blue-50 text-slate-700 font-medium py-4 px-4 rounded-lg shadow-sm text-left transition relative";
-                
                 const count = fullQuizData.filter(q => q.category === cat).length;
-                
-                btn.innerHTML = `
-                    <span class="block text-lg mb-1">${cat}</span>
-                    <span class="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded-full">${count}問</span>
-                `;
+                btn.innerHTML = `<span class="block text-lg mb-1">${cat}</span><span class="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded-full">${count}問</span>`;
                 btn.onclick = () => startQuiz(cat);
                 categoryGrid.appendChild(btn);
             });
         }
 
-        // --- クイズ開始 ---
+        // --- クイズ開始処理 ---
         function startQuiz(mode) {
+            // モードに応じた問題抽出
             if (mode === 'random') {
+                // 全問からランダム10問
                 currentQuizQueue = [...fullQuizData].sort(() => 0.5 - Math.random()).slice(0, 10);
                 categoryBadge.innerText = "ランダム出題";
+            } else if (mode === 'exam_random') {
+                // 国家試験過去問（sourceIdがあるもの）からランダム10問
+                const examQuestions = fullQuizData.filter(q => q.sourceId);
+                if (examQuestions.length === 0) { alert("国家試験問題データがありません"); return; }
+                currentQuizQueue = [...examQuestions].sort(() => 0.5 - Math.random()).slice(0, 10);
+                categoryBadge.innerText = "国家試験過去問";
             } else if (mode === 'review') {
-                // 復習モード：localStorageのIDリストに一致する問題を取得
+                // 復習モード
                 const wrongIds = getWrongQuestions();
                 currentQuizQueue = fullQuizData.filter(q => wrongIds.includes(q.id));
-                // 念のためランダムにするか、ID順にするかはお好みで（ここではランダム）
                 currentQuizQueue.sort(() => 0.5 - Math.random());
                 categoryBadge.innerText = "🔥 弱点克服";
             } else {
+                // 特定分野
                 currentQuizQueue = fullQuizData.filter(q => q.category === mode);
                 categoryBadge.innerText = mode;
             }
 
-            if (currentQuizQueue.length === 0) {
-                alert("問題がありません。");
-                return;
-            }
+            if (currentQuizQueue.length === 0) { alert("問題がありません"); return; }
 
+            // 画面遷移
             currentIndex = 0;
             score = 0;
-
             startScreen.classList.add('hidden');
             resultScreen.classList.add('hidden');
             quizScreen.classList.remove('hidden');
@@ -313,59 +1738,139 @@
         // --- 問題描画 ---
         function renderQuestion() {
             const currentData = currentQuizQueue[currentIndex];
+            currentSelectedIndices = []; // 選択状態をリセット
+
+            // 進捗表示
             progressText.innerText = `${currentIndex + 1} / ${currentQuizQueue.length}`;
             questionText.innerText = currentData.question;
 
+            // 国家試験番号バッジの表示制御
+            const oldSourceBadge = document.getElementById('source-badge');
+            if(oldSourceBadge) oldSourceBadge.remove();
+            
+            if (currentData.sourceId) {
+                const badge = document.createElement('span');
+                badge.id = 'source-badge';
+                badge.className = "inline-block bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded ml-2 mb-2 border border-orange-200";
+                badge.innerText = `第${currentData.sourceId}問`;
+                // 問題文の直前に挿入
+                questionText.parentNode.insertBefore(badge, questionText);
+            }
+
+            // 正解データ（配列）の準備
+            // 古いデータ形式(correctIndex)も新しい形式(correctIndices)も配列に統一
+            const correctAnswers = currentData.correctIndices || [currentData.correctIndex];
+            const requiredCount = correctAnswers.length;
+
+            // 「◯個選べ」のガイダンス表示
+            let guidance = document.getElementById('guidance-text');
+            if(!guidance) {
+                guidance = document.createElement('div');
+                guidance.id = 'guidance-text';
+                guidance.className = "text-sm text-blue-600 font-bold mb-3";
+                optionsContainer.parentNode.insertBefore(guidance, optionsContainer);
+            }
+            // 2つ以上選ぶ場合のみガイダンスを表示
+            guidance.innerText = requiredCount > 1 ? `※ ${requiredCount}つ選択してください` : "";
+            guidance.className = requiredCount > 1 ? "text-sm text-blue-600 font-bold mb-3 block" : "hidden";
+
+
+            // 選択肢ボタン生成
             optionsContainer.innerHTML = '';
             currentData.options.forEach((optionText, index) => {
                 const btn = document.createElement('button');
                 btn.innerText = optionText;
-                btn.className = "option-btn w-full text-left p-4 border border-slate-300 rounded-lg hover:bg-blue-50 hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-colors bg-white font-medium text-slate-600";
-                btn.onclick = () => checkAnswer(index, btn);
+                btn.className = "option-btn w-full text-left p-4 border border-slate-300 rounded-lg hover:bg-slate-50 focus:outline-none transition-colors bg-white font-medium text-slate-600";
+                
+                // クリック時の挙動設定
+                btn.onclick = () => handleOptionClick(index, btn, requiredCount, correctAnswers);
+                
                 optionsContainer.appendChild(btn);
             });
 
+            // 解説エリア等は隠す
             explanationContainer.classList.add('hidden');
             controlsContainer.classList.add('hidden');
+            
             window.scrollTo(0, 0);
         }
 
-        // --- 正誤判定 ---
-        function checkAnswer(selectedIndex, clickedBtn) {
+        // --- 選択肢クリック時の処理 ---
+        function handleOptionClick(selectedIndex, btn, requiredCount, correctAnswers) {
+            // 既に選択済みなら解除（トグル）
+            if (currentSelectedIndices.includes(selectedIndex)) {
+                currentSelectedIndices = currentSelectedIndices.filter(i => i !== selectedIndex);
+                // スタイル解除
+                btn.classList.remove('bg-blue-100', 'border-blue-500', 'text-blue-800');
+                btn.classList.add('bg-white', 'border-slate-300', 'text-slate-600');
+            } else {
+                // 未選択なら追加
+                currentSelectedIndices.push(selectedIndex);
+                // スタイル適用（青色ハイライト）
+                btn.classList.remove('bg-white', 'border-slate-300', 'text-slate-600');
+                btn.classList.add('bg-blue-100', 'border-blue-500', 'text-blue-800');
+            }
+
+            // 規定数（例: 2つ）選んだ瞬間に正誤判定へ
+            if (currentSelectedIndices.length === requiredCount) {
+                finalizeAnswer(correctAnswers);
+            }
+        }
+
+        // --- 正誤判定と結果表示 ---
+        function finalizeAnswer(correctAnswers) {
             const currentData = currentQuizQueue[currentIndex];
-            const isCorrect = (selectedIndex === currentData.correctIndex);
             const allBtns = optionsContainer.querySelectorAll('button');
 
+            // 配列の内容を比較して正誤判定（順序不同に対応するためソートして文字列化）
+            const sortedSelected = [...currentSelectedIndices].sort();
+            const sortedCorrect = [...correctAnswers].sort();
+            const isCorrect = JSON.stringify(sortedSelected) === JSON.stringify(sortedCorrect);
+
+            // ボタンのスタイル更新（正解・不正解の可視化）
             allBtns.forEach((btn, idx) => {
-                btn.disabled = true;
+                btn.disabled = true; // ボタン無効化
+                btn.classList.remove('hover:bg-slate-50', 'cursor-pointer', 'bg-blue-100', 'bg-white', 'text-blue-800');
                 btn.classList.add('cursor-default');
-                if (idx === currentData.correctIndex) {
-                    btn.classList.remove('bg-white', 'border-slate-300', 'text-slate-600');
+
+                if (correctAnswers.includes(idx)) {
+                    // 正解の選択肢はすべて「緑」
                     btn.classList.add('bg-green-100', 'border-green-500', 'font-bold', 'text-green-800');
+                    
+                    // 自分が選んでいなかった正解（選び忘れ）は枠線で強調
+                    if (!currentSelectedIndices.includes(idx)) {
+                        btn.classList.add('ring-2', 'ring-green-300');
+                    }
+                } else if (currentSelectedIndices.includes(idx)) {
+                    // 選んでしまった不正解は「赤」
+                    btn.classList.add('bg-red-100', 'border-red-500', 'text-red-800');
+                } else {
+                    // 関係ない選択肢はグレーアウト
+                    btn.classList.add('bg-slate-50', 'border-slate-200', 'text-slate-400');
                 }
             });
 
+            // スコア更新と復習リストへの追加・削除
             if (isCorrect) {
                 score++;
                 resultBadge.innerText = "⭕ 正解！";
                 resultBadge.className = "inline-block px-3 py-1 rounded text-white font-bold mb-3 bg-green-500";
-                // 正解したら弱点リストから削除（復習完了）
-                removeWrongQuestion(currentData.id);
+                removeWrongQuestion(currentData.id); // 正解したら復習リストから消す
             } else {
-                clickedBtn.classList.remove('bg-white', 'border-slate-300', 'text-slate-600');
-                clickedBtn.classList.add('bg-red-100', 'border-red-500', 'text-red-800');
                 resultBadge.innerText = "❌ 不正解...";
                 resultBadge.className = "inline-block px-3 py-1 rounded text-white font-bold mb-3 bg-red-500";
-                // 間違えたら弱点リストに追加
-                addWrongQuestion(currentData.id);
+                addWrongQuestion(currentData.id); // 間違えたら復習リストに入れる
             }
 
+            // 解説表示
             explanationText.innerText = currentData.explanation;
             explanationContainer.classList.remove('hidden');
             controlsContainer.classList.remove('hidden');
+            
             nextBtn.innerText = (currentIndex === currentQuizQueue.length - 1) ? "結果を見る" : "次の問題へ";
         }
 
+        // --- 次の問題へ ---
         function nextQuestion() {
             currentIndex++;
             if (currentIndex < currentQuizQueue.length) {
@@ -375,16 +1880,18 @@
             }
         }
 
+        // --- 結果画面 ---
         function showResult() {
             quizScreen.classList.add('hidden');
             resultScreen.classList.remove('hidden');
+
             document.getElementById('final-score').innerText = score;
             document.getElementById('total-questions').innerText = currentQuizQueue.length;
+            
             const accuracy = Math.round((score / currentQuizQueue.length) * 100);
             document.getElementById('accuracy-text').innerText = `正答率: ${accuracy}%`;
         }
 
+        // アプリ起動
         initApp();
     </script>
-</body>
-</html>
