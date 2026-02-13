@@ -1,294 +1,340 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>臨床検査技師 国家試験 演習</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body { font-family: "Helvetica Neue", "Noto Sans JP", sans-serif; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>臨床検査技師国家試験対策 - 微生物学</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .option-btn { transition: all 0.2s ease-in-out; }
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-800">
-  <div class="min-h-screen flex flex-col">
-    <header class="bg-white shadow">
-      <div class="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
-        <h1 class="text-lg sm:text-xl font-semibold text-blue-700">臨床検査技師 国家試験 演習</h1>
-        <div id="progress" class="text-sm text-slate-500"></div>
-      </div>
-    </header>
+<body class="bg-slate-100 min-h-screen py-8 px-4 text-slate-800 font-sans">
 
-    <main class="flex-1">
-      <div class="max-w-3xl mx-auto px-4 py-6">
-        <!-- Quiz Card -->
-        <div id="quiz-card" class="bg-white shadow-sm rounded-lg p-5 sm:p-6 border border-slate-100">
-          <div class="flex items-center justify-between mb-3">
-            <span id="category" class="text-xs sm:text-sm font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded hidden"></span>
-            <span id="question-number" class="text-xs sm:text-sm text-slate-500"></span>
-          </div>
-          <h2 id="question-text" class="text-base sm:text-lg font-medium mb-2"></h2>
-          <p id="multi-hint" class="text-xs text-slate-500 mb-4 hidden">※複数選択問題です。該当数を選ぶと判定されます。</p>
+    <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden min-h-[600px] flex flex-col">
+        
+        <header class="bg-blue-600 text-white px-6 py-4 shadow-md z-10">
+            <h1 class="text-xl font-bold flex items-center gap-2">
+                <span onclick="location.reload()" class="cursor-pointer hover:underline">🦠 微生物学 演習</span>
+            </h1>
+        </header>
 
-          <div id="image-wrap" class="mb-4 hidden">
-            <img id="question-image" src="" alt="問題画像" class="w-full max-h-72 object-contain rounded border border-slate-100 bg-slate-50"/>
-          </div>
+        <div id="start-screen" class="p-8 flex-1 flex flex-col fade-in">
+            <h2 class="text-2xl font-bold text-center mb-2">演習コースを選択</h2>
+            <p class="text-center text-slate-500 mb-8">学習したい分野、またはランダム出題を選んでください</p>
 
-          <div id="choices" class="space-y-3"></div>
-
-          <div id="feedback" class="mt-4 hidden">
-            <div id="result-text" class="font-semibold"></div>
-            <div id="explanation" class="mt-2 text-sm text-slate-600 bg-slate-50 border border-slate-100 rounded p-3"></div>
-          </div>
-
-          <div class="mt-6 flex justify-end">
-            <button id="next-btn" class="bg-blue-600 text-white px-4 py-2 rounded shadow-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 transition">
-              次の問題へ
+            <button onclick="startQuiz('random')" class="w-full bg-gradient-to-r from-orange-400 to-red-500 hover:from-orange-500 hover:to-red-600 text-white font-bold text-lg py-4 px-6 rounded-xl shadow-md transform transition hover:scale-[1.02] mb-8 flex justify-between items-center">
+                <span>🎲 ランダムで10問</span>
+                <span class="bg-white/20 text-sm px-2 py-1 rounded">実力試し</span>
             </button>
-          </div>
+
+            <div class="border-t border-slate-200 my-4"></div>
+            <p class="text-sm text-slate-400 font-bold mb-3">分野別演習</p>
+
+            <div id="category-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                </div>
         </div>
 
-        <!-- Result Screen -->
-        <div id="result-screen" class="bg-white shadow-sm rounded-lg p-6 border border-slate-100 hidden text-center">
-          <h2 class="text-xl font-semibold text-blue-700 mb-2">結果発表</h2>
-          <p id="score-text" class="text-lg mb-4"></p>
-          <button id="restart-btn" class="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 transition">
-            もう一度やる
-          </button>
+        <div id="quiz-screen" class="hidden p-6 flex-1 flex flex-col fade-in">
+            <div class="flex justify-between items-end border-b border-slate-100 pb-2 mb-4">
+                <span id="category-badge" class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">分野名</span>
+                <span id="progress-text" class="text-sm font-medium text-slate-500">1 / 10</span>
+            </div>
+
+            <div class="flex-grow">
+                <p id="question-text" class="text-lg font-medium leading-relaxed mb-6"></p>
+                <div id="options-container" class="flex flex-col space-y-3 mb-6"></div>
+            </div>
+
+            <div id="explanation-container" class="hidden bg-slate-50 rounded-lg p-5 border border-slate-200 mt-4 mb-4">
+                <div id="result-badge" class="inline-block px-3 py-1 rounded text-white font-bold mb-3"></div>
+                <p id="explanation-text" class="text-slate-700 whitespace-pre-wrap leading-relaxed text-sm"></p>
+            </div>
+
+            <div id="controls-container" class="hidden text-right pt-2">
+                <button id="next-btn" onclick="nextQuestion()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow transition">
+                    次の問題へ
+                </button>
+            </div>
         </div>
-      </div>
-    </main>
 
-    <footer class="text-center text-xs text-slate-400 py-4">
-      © Clinical Lab Quiz Prototype
-    </footer>
-  </div>
+        <div id="result-screen" class="hidden p-10 flex-1 flex flex-col items-center justify-center fade-in text-center">
+            <h2 class="text-3xl font-bold mb-2">演習完了！</h2>
+            <p class="text-slate-500 mb-6">お疲れ様でした</p>
+            
+            <div class="bg-slate-50 rounded-2xl p-8 mb-8 border border-slate-200 w-full max-w-sm">
+                <div class="text-sm text-slate-500 mb-1">スコア</div>
+                <div class="text-6xl font-extrabold text-blue-600 mb-2">
+                    <span id="final-score">0</span><span class="text-3xl text-slate-400">/</span><span id="total-questions" class="text-3xl text-slate-400">0</span>
+                </div>
+                <div id="accuracy-text" class="text-lg font-medium text-slate-600">正答率: 0%</div>
+            </div>
 
-  <script>
-    const questions = [
-      {
-        id: "68",
-        category: "",
-        question_text: "偏性細胞内寄生性を有するのはどれか。",
-        image_url: null,
-        choices: [
-          "Neisseria meningitidis",
-          "Rickettsia prowazekii",
-          "Bordetella pertussis",
-          "Shigella dysenteriae",
-          "Candida albicans"
-        ],
-        correct_answer: 1,
-        explanation: "リケッチアは偏性細胞内寄生性で、宿主細胞内でのみ増殖する。"
-      },
-      {
-        id: "69",
-        category: "",
-        question_text: "細胞壁にミコール酸を多く含むのはどれか。",
-        image_url: null,
-        choices: [
-          "Bacillus cereus",
-          "Campylobacter jejuni",
-          "Clostridium botulinum",
-          "Mycobacterium abscessus",
-          "Yersinia enterocolitica"
-        ],
-        correct_answer: 3,
-        explanation: "抗酸菌（Mycobacterium属）の細胞壁はミコール酸を多く含む。"
-      },
-      {
-        id: "70",
-        category: "",
-        question_text: "皮膚の消毒には使用できるが、粘膜の消毒には使用できないのはどれか。",
-        image_url: null,
-        choices: [
-          "クレゾール石鹸",
-          "グルタラール",
-          "ポビドンヨード",
-          "消毒用エタノール",
-          "塩化ベンザルコニウム"
-        ],
-        correct_answer: 0,
-        explanation: "クレゾール石鹸は刺激性が強く、皮膚用で粘膜には使用できない。"
-      },
-      {
-        id: "71",
-        category: "",
-        question_text: "蛋白合成阻害薬はどれか。2つ選べ。",
-        image_url: null,
-        choices: [
-          "アミカシン",
-          "ピペラシリン",
-          "セファゾリン",
-          "エリスロマイシン",
-          "レボフロキサシン"
-        ],
-        correct_answer: [0, 3],
-        explanation: "アミカシン（30S）とエリスロマイシン（50S）は蛋白合成阻害薬。ピペラシリン・セファゾリンは細胞壁合成阻害、レボフロキサシンはDNAジャイレース阻害。"
-      },
-      {
-        id: "72",
-        category: "",
-        question_text: "毒素型食中毒の原因菌はどれか。",
-        image_url: null,
-        choices: [
-          "Salmonella Enteritidis",
-          "Yersinia enterocolitica",
-          "Vibrio parahaemolyticus",
-          "Campylobacter jejuni",
-          "Clostridium botulinum"
-        ],
-        correct_answer: 4,
-        explanation: "ボツリヌス菌は産生した毒素による毒素型食中毒の原因となる。"
-      }
-    ];
+            <button onclick="location.reload()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition transform hover:scale-105">
+                コース選択に戻る
+            </button>
+        </div>
 
-    let currentIndex = 0;
-    let score = 0;
-    let answered = false;
-    let selectedIndices = new Set();
+    </div>
 
-    const progressEl = document.getElementById("progress");
-    const categoryEl = document.getElementById("category");
-    const questionNumberEl = document.getElementById("question-number");
-    const questionTextEl = document.getElementById("question-text");
-    const multiHintEl = document.getElementById("multi-hint");
-    const imageWrapEl = document.getElementById("image-wrap");
-    const questionImageEl = document.getElementById("question-image");
-    const choicesEl = document.getElementById("choices");
-    const feedbackEl = document.getElementById("feedback");
-    const resultTextEl = document.getElementById("result-text");
-    const explanationEl = document.getElementById("explanation");
-    const nextBtn = document.getElementById("next-btn");
+    <script>
+        // --- 1. 問題データ (CSVから変換済み) ---
+        // sourceタグなどの不要な文字は除去しています
+        const fullQuizData = [
+    { id: 1, category: "総論（分類）", question: "原核生物に該当するのはどれか。", options: ["1. Candida albicans", "2. Escherichia coli", "3. Entamoeba histolytica", "4. Trichophyton rubrum", "5. Influenza virus"], correctIndex: 1, explanation: "【正解: 2】\n原核生物は細菌（真正細菌）と古細菌である。1,4は真菌（真核）、3は原虫（真核）、5はウイルス。" },
+    { id: 2, category: "総論（構造）", question: "グラム陰性菌の細胞壁外膜を構成する主な成分はどれか。", options: ["1. ペプチドグリカン", "2. タイコ酸", "3. リポ多糖体（LPS）", "4. ミコール酸", "5. エルゴステロール"], correctIndex: 2, explanation: "【正解: 3】\nグラム陰性菌の外膜にはリポ多糖体（LPS）が存在し、内毒素活性を持つ。タイコ酸はグラム陽性菌、ミコール酸は抗酸菌、エルゴステロールは真菌。" },
+    { id: 3, category: "総論（構造）", question: "細菌の芽胞について正しいのはどれか。", options: ["1. 熱に不安定である", "2. 消毒薬に感受性が高い", "3. 栄養欠乏時に形成される", "4. 生殖に関与する", "5. グラム陰性菌のみが形成する"], correctIndex: 2, explanation: "【正解: 3】\n芽胞は環境悪化（栄養欠乏など）時に形成される耐久型構造。熱や消毒薬に極めて強い。グラム陽性桿菌（Bacillus, Clostridium）が形成する。" },
+    { id: 4, category: "総論（構造）", question: "真正細菌のリボソームの沈降係数はどれか。", options: ["1. 30S", "2. 50S", "3. 70S", "4. 80S", "5. 100S"], correctIndex: 2, explanation: "【正解: 3】\n原核生物（細菌）のリボソームは70S（30S+50S）。真核生物は80S（40S+60S）。" },
+    { id: 5, category: "染色法", question: "グラム染色の脱色工程で使用される試薬はどれか。", options: ["1. クリスタル紫", "2. ルゴール液", "3. エタノール", "4. サフラニン", "5. 石炭酸フクシン"], correctIndex: 2, explanation: "【正解: 3】\nグラム染色手順：①クリスタル紫（染色）→②ルゴール（媒染）→③エタノール（脱色）→④サフラニン等（対比染色）。" },
+    { id: 6, category: "染色法", question: "抗酸菌染色（チール・ネルゼン法）で赤色に染まるのはどれか。", options: ["1. Staphylococcus aureus", "2. Escherichia coli", "3. Mycobacterium tuberculosis", "4. Candida albicans", "5. Pseudomonas aeruginosa"], correctIndex: 2, explanation: "【正解: 3】\n抗酸菌は石炭酸フクシンで加温染色すると、酸アルコールによる脱色に抵抗し赤色に残る。他は青色（対比染色）に染まる。" },
+    { id: 7, category: "染色法", question: "ヒメネス染色が同定に有用な菌はどれか。", options: ["1. Mycobacterium tuberculosis", "2. Legionella pneumophila", "3. Corynebacterium diphtheriae", "4. Cryptococcus neoformans", "5. Mycoplasma pneumoniae"], correctIndex: 1, explanation: "【正解: 2】\nレジオネラはグラム染色で染まりにくいため、ヒメネス染色（赤色）を用いる。" },
+    { id: 8, category: "染色法", question: "異染小体の検出に用いられる染色法はどれか。", options: ["1. グラム染色", "2. チール・ネルゼン染色", "3. ナイセル染色", "4. 墨汁法", "5. ヒメネス染色"], correctIndex: 2, explanation: "【正解: 3】\nジフテリア菌などが持つ異染小体は、ナイセル染色で菌体（黄褐色）に対し濃青色に染まる。" },
+    { id: 9, category: "染色法", question: "墨汁法で観察される構造物はどれか。", options: ["1. 芽胞", "2. 鞭毛", "3. 莢膜", "4. 異染小体", "5. 線毛"], correctIndex: 2, explanation: "【正解: 3】\nクリプトコックスなどの莢膜は墨汁粒子を排除するため、黒背景の中で白く抜けて見える。" },
+    { id: 10, category: "培地", question: "腸内細菌科の選択分離に用いられるSS寒天培地の選択物質はどれか。", options: ["1. 胆汁酸塩・ブリリアントグリーン", "2. ナリジクス酸", "3. ペニシリンG", "4. バンコマイシン", "5. ポリミキシンB"], correctIndex: 0, explanation: "【正解: 1】\n胆汁酸塩とブリリアントグリーンがグラム陽性菌の発育を抑制し、サルモネラ・赤痢菌を選択する。" },
+    { id: 11, category: "培地", question: "TCBS寒天培地で白糖分解菌が形成するコロニーの色はどれか。", options: ["1. 赤色", "2. 黒色", "3. 緑色", "4. 黄色", "5. 無色"], correctIndex: 3, explanation: "【正解: 4】\n白糖分解により酸産生が起こり、pH指示薬のBTBが黄色になる（例：Vibrio cholerae）。非分解は緑色（例：V. parahaemolyticus）。" },
+    { id: 12, category: "培地", question: "Mycoplasma pneumoniaeの分離培養に必要な成分はどれか。", options: ["1. 活性炭", "2. 馬血清", "3. 鶏卵", "4. 胆汁", "5. 塩化ナトリウム（3%）"], correctIndex: 1, explanation: "【正解: 2】\nマイコプラズマは細胞膜合成にコレステロールを必要とするため、馬血清などを添加したPPLO培地を用いる。" },
+    { id: 13, category: "消毒・滅菌", question: "高圧蒸気滅菌の標準的な条件はどれか。", options: ["1. 100℃ 30分", "2. 115℃ 15分", "3. 121℃ 20分", "4. 132℃ 5分", "5. 160℃ 60分"], correctIndex: 2, explanation: "【正解: 3】\nオートクレーブの標準条件は121℃、2気圧、20分間。これで芽胞を含む全微生物を死滅させる。" },
+    { id: 14, category: "消毒・滅菌", question: "エチレンオキサイドガス（EOG）滅菌の特徴はどれか。", options: ["1. 短時間で完了する", "2. 高温（100℃以上）での処理が必要", "3. プラスチック製品に適する", "4. 液体培地の滅菌に適する", "5. 残留毒性がない"], correctIndex: 2, explanation: "【正解: 3】\n低温（50-60℃）で実施できるため、熱に弱いカテーテルやプラスチック製品の滅菌に適する。残留ガスの除去（エアレーション）が必要。" },
+    { id: 15, category: "消毒・滅菌", question: "次亜塩素酸ナトリウムが有効でない病原体はどれか。", options: ["1. B型肝炎ウイルス", "2. ノロウイルス", "3. 黄色ブドウ球菌", "4. 結核菌", "5. 芽胞菌"], correctIndex: 4, explanation: "【正解: 5】\n次亜塩素酸Naは中水準消毒薬であり、一般細菌やウイルスには有効だが、芽胞には効果不十分。" },
+    { id: 16, category: "消毒・滅菌", question: "消毒用エタノールが効きにくいウイルスはどれか。", options: ["1. インフルエンザウイルス", "2. ヘルペスウイルス", "3. 風疹ウイルス", "4. ノロウイルス", "5. HIV"], correctIndex: 3, explanation: "【正解: 4】\nエンベロープ（脂質膜）を持たないウイルス（ノロ、ロタ、アデノなど）にはアルコール等の有機溶媒が効きにくい。" },
+    { id: 17, category: "抗菌薬", question: "β-ラクタム系抗菌薬の作用機序はどれか。", options: ["1. 細胞膜機能阻害", "2. タンパク合成阻害", "3. 細胞壁合成阻害", "4. 核酸合成阻害", "5. 葉酸合成阻害"], correctIndex: 2, explanation: "【正解: 3】\nペニシリンやセフェム系などのβ-ラクタム剤は、PBPに結合して細胞壁（ペプチドグリカン）の合成を阻害する。" },
+    { id: 18, category: "抗菌薬", question: "アミノグリコシド系抗菌薬の作用点はどれか。", options: ["1. リボソーム 30S", "2. 細胞膜", "3. DNAジャイレース", "4. RNAポリメラーゼ", "5. 細胞壁"], correctIndex: 0, explanation: "【正解: 1】\nアミノグリコシド系（ゲンタマイシン等）はリボソーム30Sサブユニットに結合し、タンパク合成を阻害する。50S阻害はマクロライド系など。" },
+    { id: 19, category: "抗菌薬", question: "ニューキノロン系抗菌薬の作用機序はどれか。", options: ["1. 細胞壁合成阻害", "2. DNAジャイレース阻害", "3. 葉酸合成阻害", "4. リボソーム50S阻害", "5. 細胞膜機能障害"], correctIndex: 1, explanation: "【正解: 2】\nキノロン系はDNAジャイレース（トポイソメラーゼIV）を阻害し、DNA複製を阻止する。" },
+    { id: 20, category: "抗菌薬", question: "Mycoplasmaに無効な抗菌薬はどれか。", options: ["1. テトラサイクリン系", "2. マクロライド系", "3. ニューキノロン系", "4. セフェム系", "5. リンコマイシン系"], correctIndex: 3, explanation: "【正解: 4】\nマイコプラズマは細胞壁を持たないため、細胞壁合成阻害剤であるβ-ラクタム系（セフェム、ペニシリン）は無効。" },
+    { id: 21, category: "耐性菌", question: "MRSA（メチシリン耐性黄色ブドウ球菌）の主な耐性因子はどれか。", options: ["1. ペニシリナーゼ", "2. PBP2' (PBP2a)", "3. ESBL", "4. メタロ-β-ラクタマーゼ", "5. DNAジャイレース変異"], correctIndex: 1, explanation: "【正解: 2】\nmecA遺伝子により、β-ラクタム剤との親和性が低いPBP2'（PBP2a）が産生され、多くのβ-ラクタム剤が無効となる。" },
+    { id: 22, category: "耐性菌", question: "ESBL（基質特異性拡張型β-ラクタマーゼ）産生菌に有効な薬剤はどれか。", options: ["1. ペニシリンG", "2. セフォタキシム", "3. セフタジジム", "4. カルバペネム系", "5. アズトレオナム"], correctIndex: 3, explanation: "【正解: 4】\nESBLはペニシリンや第3世代セフェムを分解するが、カルバペネム系やセファマイシン系は分解できず有効である。" },
+    { id: 23, category: "陽性球菌", question: "Staphylococcus aureusの同定試験で陽性となるのはどれか。", options: ["1. オキシダーゼ試験", "2. インドール試験", "3. コアグラーゼ試験", "4. 胆汁溶解試験", "5. PYR試験"], correctIndex: 2, explanation: "【正解: 3】\n黄色ブドウ球菌は血漿凝固酵素（コアグラーゼ）を産生する。表皮ブドウ球菌(CNS)との重要な鑑別点。" },
+    { id: 24, category: "陽性球菌", question: "DNase培地で陽性を示すブドウ球菌はどれか。", options: ["1. Staphylococcus epidermidis", "2. Staphylococcus aureus", "3. Staphylococcus saprophyticus", "4. Staphylococcus hominis", "5. Staphylococcus capitis"], correctIndex: 1, explanation: "【正解: 2】\nS. aureusはDNase、コアグラーゼ、マンニット分解などが陽性である。" },
+    { id: 25, category: "陽性球菌", question: "Streptococcus pyogenes（A群溶血性レンサ球菌）の溶血性はどれか。", options: ["1. α溶血", "2. β溶血", "3. γ溶血", "4. 二重溶血", "5. 溶血なし"], correctIndex: 1, explanation: "【正解: 2】\n血液寒天培地上で完全溶血（透明な溶血環＝β溶血）を示す。肺炎球菌などはα溶血（緑色）。" },
+    { id: 26, category: "陽性球菌", question: "Streptococcus agalactiae（B群）が産生し、黄色ブドウ球菌のβ溶血を増強させる因子はどれか。", options: ["1. コアグラーゼ", "2. CAMP因子", "3. 溶血毒素", "4. ロイコシジン", "5. エンテロトキシン"], correctIndex: 1, explanation: "【正解: 2】\nCAMPテスト陽性。B群レンサ球菌(GBS)はCAMP因子を産生し、S. aureusの溶血帯と交差する部分で矢尻状の溶血増強を示す。" },
+    { id: 27, category: "陽性球菌", question: "肺炎球菌（Streptococcus pneumoniae）の鑑別試験で感性（陽性）を示すのはどれか。", options: ["1. バシトラシン", "2. オプトヒン", "3. 胆汁エスクリン", "4. 6.5%食塩", "5. CAMPテスト"], correctIndex: 1, explanation: "【正解: 2】\n肺炎球菌はオプトヒン感性（発育阻止円形成）および胆汁溶解テスト陽性を示す。α溶血連鎖球菌との鑑別に用いる。" },
+    { id: 28, category: "陽性球菌", question: "腸球菌（Enterococcus属）の特徴的な性状はどれか。", options: ["1. コアグラーゼ陽性", "2. 胆汁エスクリン陽性・6.5%食塩耐性", "3. オプトヒン感性", "4. 運動性陽性", "5. 硝酸塩還元陽性"], correctIndex: 1, explanation: "【正解: 2】\n腸球菌は過酷な環境（胆汁、高塩分）に耐える。D群レンサ球菌との鑑別に6.5%食塩耐性が重要。" },
+    { id: 29, category: "腸内細菌", question: "腸内細菌科に共通する性状はどれか。", options: ["1. オキシダーゼ陽性", "2. 硝酸塩還元陽性", "3. 偏性好気性", "4. ブドウ糖非発酵", "5. 芽胞形成"], correctIndex: 1, explanation: "【正解: 2】\n腸内細菌科の定義：①グラム陰性桿菌、②通性嫌気性、③ブドウ糖発酵、④硝酸塩還元陽性、⑤オキシダーゼ陰性。" },
+    { id: 30, category: "腸内細菌", question: "TSI培地で高層部が黒変し、斜面が赤色（乳糖非分解）の菌はどれか。", options: ["1. Escherichia coli", "2. Klebsiella pneumoniae", "3. Salmonella Typhi", "4. Salmonella Enteritidis", "5. Shigella sonnei"], correctIndex: 3, explanation: "【正解: 4】\n黒変はH2S産生を示す。斜面赤＝乳糖非分解。これに該当するのはSalmonella属（Typhi以外はガス産生あり）やProteusなど。S. TyphiはH2S微量で黒変弱いことがある。" },
+    { id: 31, category: "腸内細菌", question: "非運動性の腸内細菌はどれか。", options: ["1. Escherichia coli", "2. Klebsiella pneumoniae", "3. Salmonella Enteritidis", "4. Serratia marcescens", "5. Proteus mirabilis"], correctIndex: 1, explanation: "【正解: 2】\nKlebsiella属とShigella属（赤痢菌）は鞭毛を持たず、運動性陰性である。Yersiniaは37℃で不動。" },
+    { id: 32, category: "腸内細菌", question: "Voges-Proskauer（VP）反応が陽性の菌はどれか。", options: ["1. Escherichia coli", "2. Salmonella Enteritidis", "3. Shigella flexneri", "4. Klebsiella pneumoniae", "5. Proteus vulgaris"], correctIndex: 3, explanation: "【正解: 4】\nVP反応はブドウ糖発酵によりアセトインを産生するかを見る。Klebsiella, Enterobacter, Serratiaなどは陽性。" },
+    { id: 33, category: "腸内細菌", question: "Yersinia enterocoliticaの特徴的な運動性はどれか。", options: ["1. 常に運動性なし", "2. 37℃で活発に運動", "3. 25℃で運動性あり、37℃でなし", "4. 鞭毛を持たないが滑走運動する", "5. 極鞭毛による活発な運動"], correctIndex: 2, explanation: "【正解: 3】\nエルシニア属（ペスト菌除く）は低温（25℃付近）でのみ周毛性鞭毛を形成して運動する。37℃では鞭毛を作らない。" },
+    { id: 34, category: "腸内細菌", question: "Serratia marcescensが産生することのある赤い色素はどれか。", options: ["1. ピオシアニン", "2. プロジギオシン", "3. フルオレセイン", "4. カロテノイド", "5. メラニン"], correctIndex: 1, explanation: "【正解: 2】\nセラチア菌の一部は赤色色素（プロジギオシン）を産生し、コロニーが赤くなる。室温培養で顕著。" },
+    { id: 35, category: "非発酵菌", question: "緑膿菌（Pseudomonas aeruginosa）の特徴で正しいのはどれか。", options: ["1. オキシダーゼ陰性", "2. ブドウ糖を発酵する", "3. 42℃で発育可能", "4. グラム陽性球菌", "5. H2Sを産生する"], correctIndex: 2, explanation: "【正解: 3】\n緑膿菌はブドウ糖非発酵、オキシダーゼ陽性、42℃発育可、NAC寒天で発育などが特徴。" },
+    { id: 36, category: "非発酵菌", question: "緑膿菌が産生する緑色色素はどれか。", options: ["1. フルオレセイン", "2. ピオシアニン", "3. プロディジオシン", "4. ビリルビン", "5. ヘモグロビン"], correctIndex: 1, explanation: "【正解: 2】\nピオシアニン（緑色）とピオベルディン（蛍光黄緑色＝フルオレセイン）を産生するが、緑膿菌特異的なのはピオシアニン。" },
+    { id: 37, category: "非発酵菌", question: "Acinetobacter baumanniiの性状として正しいのはどれか。", options: ["1. グラム陽性桿菌", "2. オキシダーゼ陽性", "3. 運動性あり", "4. オキシダーゼ陰性・運動性なし", "5. ブドウ糖発酵"], correctIndex: 3, explanation: "【正解: 4】\nアシネトバクターはグラム陰性球桿菌。ブドウ糖非発酵菌だが、緑膿菌と異なりオキシダーゼ陰性である点が重要。" },
+    { id: 38, category: "陰性桿菌", question: "Vibrio parahaemolyticus（腸炎ビブリオ）の好塩性はどれか。", options: ["1. 食塩なしで発育可能", "2. 1%食塩で発育抑制", "3. 3～4%食塩でよく発育", "4. 10%以上の食塩が必要", "5. 食塩濃度に関係なく発育"], correctIndex: 2, explanation: "【正解: 3】\n海水細菌であり、増殖に塩分（Na+）を必須とする。真水では死滅しやすい。" },
+    { id: 39, category: "陰性桿菌", question: "TCBS寒天培地で緑色コロニーを形成するVibrioはどれか。", options: ["1. Vibrio cholerae", "2. Vibrio alginolyticus", "3. Vibrio parahaemolyticus", "4. Vibrio furnissii", "5. Vibrio metschnikovii"], correctIndex: 2, explanation: "【正解: 3】\n白糖非分解菌（V. parahaemolyticus, V. vulnificus）は緑色コロニー。白糖分解菌（V. cholerae, V. alginolyticus）は黄色コロニー。" },
+    { id: 40, category: "陰性桿菌", question: "Haemophilus influenzaeの発育に必要な因子はどれか。", options: ["1. X因子のみ", "2. V因子のみ", "3. X因子とV因子の両方", "4. 鉄とシステイン", "5. コレステロール"], correctIndex: 2, explanation: "【正解: 3】\nインフルエンザ菌はX因子（ヘミン）とV因子（NAD）の両方を要求する。チョコレート寒天培地にはこれらが含まれる。" },
+    { id: 41, category: "陰性桿菌", question: "黄色ブドウ球菌の周囲でインフルエンザ菌が発育する現象を何というか。", options: ["1. スキップ現象", "2. 衛星現象（サテライト現象）", "3. イーグル効果", "4. プロゾーン現象", "5. 協同作用"], correctIndex: 1, explanation: "【正解: 2】\nブドウ球菌が溶血によりV因子を供給するため、血液寒天培地上でもブドウ球菌の周囲だけインフルエンザ菌が発育できる。" },
+    { id: 42, category: "陰性桿菌", question: "Legionella pneumophilaの培養に必須の培地はどれか。", options: ["1. 血液寒天培地", "2. チョコレート寒天培地", "3. BCYEα寒天培地", "4. マッコンキー寒天培地", "5. GAM寒天培地"], correctIndex: 2, explanation: "【正解: 3】\nレジオネラはL-システインと鉄を要求するため、これらを含むBCYEα寒天培地（またはWYO培地）が必要。" },
+    { id: 43, category: "陰性桿菌", question: "百日咳菌（Bordetella pertussis）の分離に用いられる培地はどれか。", options: ["1. Bordet-Gengou培地", "2. SS寒天培地", "3. Skirrow培地", "4. PPLO培地", "5. Ogawa培地"], correctIndex: 0, explanation: "【正解: 1】\nボルデ・ジャング培地はジャガイモ浸出液や血液を含み、百日咳菌の分離に用いる。真珠様コロニーを形成する。" },
+    { id: 44, category: "陰性桿菌", question: "人獣共通感染症の原因菌で、波状熱を起こすのはどれか。", options: ["1. Bartonella henselae", "2. Brucella属", "3. Coxiella burnetii", "4. Pasteurella multocida", "5. Francisella tularensis"], correctIndex: 1, explanation: "【正解: 2】\nブルセラ症は波状熱を特徴とする。細胞内寄生性があり、実験室感染のリスクが高い（BSL3）。" },
+    { id: 45, category: "嫌気性菌", question: "Clostridium perfringens（ウェルシュ菌）の特徴的なコロニー性状はどれか。", options: ["1. メデューサの頭状", "2. 縮毛状", "3. 二重溶血環（ターゲット溶血）", "4. 遊走現象（スウォーミング）", "5. 粘液性"], correctIndex: 2, explanation: "【正解: 3】\n内側の完全溶血（θ毒素）と外側の不完全溶血（α毒素）による二重溶血を示すのが特徴。" },
+    { id: 46, category: "嫌気性菌", question: "Clostridioides difficile（旧Clostridium）が引き起こす、抗菌薬投与後に関連する疾患はどれか。", options: ["1. ガス壊疽", "2. 破傷風", "3. 偽膜性大腸炎", "4. ボツリヌス症", "5. 放線菌症"], correctIndex: 2, explanation: "【正解: 3】\n菌交代現象により異常増殖し、毒素（トキシンA/B）を産生して偽膜性大腸炎を起こす。診断には便中の毒素やGDH抗原を検査する。" },
+    { id: 47, category: "嫌気性菌", question: "Bacteroides fragilisの耐性傾向として特徴的なのはどれか。", options: ["1. メトロニダゾール耐性", "2. バンコマイシン感性", "3. ペニシリンG耐性", "4. クリンダマイシン感性", "5. 胆汁酸感受性"], correctIndex: 2, explanation: "【正解: 3】\nβ-ラクタマーゼを産生するため、ペニシリンGや第一世代セフェムに耐性を示す。BBE培地（胆汁酸含有）でよく発育し、黒色コロニーを作る。" },
+    { id: 48, category: "嫌気性菌", question: "破傷風菌（Clostridium tetani）の芽胞の形態はどれか。", options: ["1. 太鼓のバチ状（端在性）", "2. ラケット状（亜端在性）", "3. レモン状（中央性）", "4. 分岐状", "5. 連鎖状"], correctIndex: 0, explanation: "【正解: 1】\n菌体の先端に正円形の芽胞を形成し、太鼓のバチ（ドラムスティック）のように見える。" },
+    { id: 49, category: "らせん・微好気", question: "Campylobacter jejuniの培養条件として適切なのはどれか。", options: ["1. 25℃・好気培養", "2. 35℃・嫌気培養", "3. 37℃・好気培養", "4. 42℃・微好気培養", "5. 4℃・微好気培養"], correctIndex: 3, explanation: "【正解: 4】\nカンピロバクターは微好気性（酸素5-10%）であり、特にC. jejuniは42℃の高温で選択的に分離される。" },
+    { id: 50, category: "らせん・微好気", question: "Campylobacter jejuniの感染が引き金となって発症することがある神経疾患はどれか。", options: ["1. 髄膜炎", "2. ギラン・バレー症候群", "3. 脳炎", "4. 重症筋無力症", "5. パーキンソン病"], correctIndex: 1, explanation: "【正解: 2】\n菌体表面のリポ多糖体構造がヒトの末梢神経のガングリオシドと類似しているため、自己免疫機序により発症する。" },
+    { id: 51, category: "らせん・微好気", question: "Helicobacter pyloriが強酸性の胃内で生存するために産生する酵素はどれか。", options: ["1. カタラーゼ", "2. オキシダーゼ", "3. ウレアーゼ", "4. リパーゼ", "5. DNAse"], correctIndex: 2, explanation: "【正解: 3】\n尿素を分解してアンモニアを産生し、局所的に胃酸を中和することで生存・定着する。" },
+    { id: 52, category: "抗酸菌", question: "結核菌（Mycobacterium tuberculosis）のナイアシンテストの結果はどれか。", options: ["1. 陽性", "2. 陰性", "3. 疑陽性", "4. 判定不能", "5. 変動する"], correctIndex: 0, explanation: "【正解: 1】\n結核菌はナイアシン（ニコチン酸）を代謝できずに蓄積するため、抽出液で陽性反応を示す。NTMとの重要な鑑別点。" },
+    { id: 53, category: "抗酸菌", question: "小川培地に使われる成分の組合せはどれか。", options: ["1. 寒天 − 水酸化ナトリウム", "2. 卵黄 − リン酸二水素カリウム", "3. 馬血清 − 塩酸", "4. ジャガイモ − 硫酸", "5. 活性炭 − クエン酸"], correctIndex: 1, explanation: "【正解: 2】\n小川培地は卵培地（酸性）であるため、アルカリ処理した検体を中和せずに接種できる（中和操作を省略できる）。" },
+    { id: 54, category: "抗酸菌", question: "Runyon分類で「光発色菌群（I群）」に属するのはどれか。", options: ["1. Mycobacterium tuberculosis", "2. Mycobacterium avium", "3. Mycobacterium kansasii", "4. Mycobacterium gordonae", "5. Mycobacterium abscessus"], correctIndex: 2, explanation: "【正解: 3】\nM. kansasiiは光照射により黄色色素を産生する（暗所ではクリーム色）。M. marinumもこれに含まれる。" },
+    { id: 55, category: "抗酸菌", question: "Mycobacterium avium complex (MAC)症の特徴はどれか。", options: ["1. 結核菌と同様にヒト-ヒト感染する", "2. Runyon分類のIV群（迅速発育）である", "3. 日本の非結核性抗酸菌症（NTM症）で最も多い", "4. ナイアシンテスト陽性である", "5. 治療にはイソニアジドが有効である"], correctIndex: 2, explanation: "【正解: 3】\nMAC症は日本におけるNTM症の約8割を占める。ヒト-ヒト感染はしない。治療はクラリスロマイシン、エタンブトール、リファンピシンの３種類を用いた多剤併用療法が主流。" },
+    { id: 56, category: "抗酸菌", question: "Nocardia属の特徴的な染色性状はどれか。", options: ["1. グラム陰性・抗酸性陰性", "2. グラム陽性・抗酸性陽性（強）", "3. グラム陽性・抗酸性陽性（弱）", "4. グラム陰性・異染小体陽性", "5. グラム不定・芽胞形成"], correctIndex: 2, explanation: "【正解: 3】\nグラム陽性の分岐した菌糸状形態を示し、Kinyoun染色などで弱抗酸性（硫酸で脱色されやすいが、弱い酸には抵抗する）を示す。" },
+    { id: 57, category: "スピロヘータ", question: "梅毒の病原体はどれか。", options: ["1. Neisseria gonorrhoeae", "2. Treponema pallidum", "3. Borrelia burgdorferi", "4. Leptospira interrogans", "5. Chlamydia trachomatis"], correctIndex: 1, explanation: "【正解: 2】\nT. pallidumは人工培地で培養できないため、血清学的検査（RPR, TPHA）で診断する。" },
+    { id: 58, category: "スピロヘータ", question: "ライム病の病原体はどれか。", options: ["1. Borrelia burgdorferi ", "2. Rickettsia japonica ", "3. Plasmodium falciparum", "4. Dengue virus", "5. Yersinia pestis "], correctIndex: 0, explanation: "【正解: 1】\nライム病ボレリアはマダニによって媒介され、遊走性紅斑や関節炎、神経症状を起こす。" },
+    { id: 59, category: "スピロヘータ", question: "ワイル病の病原体はどれか。", options: ["1. Treponema pallidum", "2. Leptospira interrogans", "3. Borrelia recurrentis", "4. Rickettsia prowazekii", "5. Helicobacter pylori"], correctIndex: 1, explanation: "【正解: 2】\nコルトフ培地（血清加培地）で培養可能。ドブネズミ等の尿で汚染された土壌や水から経皮感染する。" },
+    { id: 60, category: "マイコ/リケ/クラ", question: "マイコプラズマ肺炎の治療に第一選択となる薬剤はどれか。", options: ["1. ペニシリン系", "2. セフェム系", "3. カルバペネム系", "4. マクロライド系", "5. モノバクタム系"], correctIndex: 3, explanation: "【正解: 4】\n細胞壁を持たないためβ-ラクタム系は無効。タンパク合成阻害薬であるマクロライド系やテトラサイクリン系を用いる。" },
+    { id: 61, category: "マイコ/リケ/クラ", question: "リケッチア感染症の主な媒介動物はどれか。", options: ["1. 蚊", "2. ネズミ", "3. ハエ", "4. 節足動物", "5. 鳥類"], correctIndex: 3, explanation: "【正解: 4】\nリケッチア症は主にダニやシラミなどの節足動物によって媒介される。\nつつが虫病：ツツガムシ（ダニの一種）\n日本紅斑熱：マダニ\n発疹チフス：コロモジラミ\n発疹熱：ネズミノミ" },
+    { id: 62, category: "マイコ/リケ/クラ", question: "クラミジア感染症の治療に有効な抗菌薬はどれか。", options: ["1. ペニシリン系", "2. セフェム系", "3. マクロライド系", "4. アミノグリコシド系", "5. カルバペネム系"], correctIndex: 2, explanation: "【正解: 3】\nクラミジアは細胞壁のペプチドグリカンが欠如（または微量）しているため、細胞壁合成を阻害するβ-ラクタム系（ペニシリン、セフェム、カルバペネム）は無効。 細胞内移行性が良く、タンパク質合成を阻害するマクロライド系（アジスロマイシン、クラリスロマイシンなど）、テトラサイクリン系などが第一選択薬となる。" },
+    { id: 63, category: "マイコ/リケ/クラ", question: "Chlamydia psittaciの主な感染経路はどれか。", options: ["1. 性行為感染", "2. 蚊による媒介", "3. 鳥類の乾燥糞便の吸入", "4. 汚染水の摂取", "5. 血液製剤"], correctIndex: 2, explanation: "【正解: 3】\nインコやハトなどの糞便に含まれる菌を吸入することで感染する人獣共通感染症。" },
+    { id: 64, category: "ウイルス", question: "DNAウイルスに分類されるのはどれか。", options: ["1. インフルエンザウイルス", "2. アデノウイルス", "3. 麻疹ウイルス", "4. 風疹ウイルス", "5. 日本脳炎ウイルス"], correctIndex: 1, explanation: "【正解: 2】\nアデノウイルス、ヘルペスウイルス、ポックスウイルス、パピローマウイルス、B型肝炎ウイルスなどはDNAウイルス。他はRNAウイルス。" },
+    { id: 65, category: "ウイルス", question: "エンベロープ（脂質膜）を持たないため、アルコール消毒に抵抗性を示すのはどれか。", options: ["1. インフルエンザウイルス", "2. コロナウイルス", "3. ヘルペスウイルス", "4. ノロウイルス", "5. 風疹ウイルス"], correctIndex: 3, explanation: "【正解: 4】\nノロウイルス、ロタウイルス、アデノウイルス、ポリオウイルスなどはエンベロープを持たない（ノンエンベロープウイルス）。次亜塩素酸Naなどが有効。" },
+    { id: 66, category: "ウイルス", question: "ヘルペスウイルスの特徴的な性質はどれか。", options: ["1. 逆転写酵素を持つ", "2. 神経節などに潜伏感染する", "3. 芽胞を形成する", "4. 封入体を形成しない", "5. RNAウイルスである"], correctIndex: 1, explanation: "【正解: 2】\n初感染後、三叉神経節や仙髄神経節などに潜伏し、免疫低下時や疲労時に再活性化して帯状疱疹などを起こす。" },
+    { id: 67, category: "ウイルス", question: "手足口病の主な原因ウイルスはどれか。", options: ["1. ヒトパピローマウイルス", "2. コクサッキーウイルスA16型", "3. 単純ヘルペスウイルス", "4. アデノウイルス", "5. ロタウイルス"], correctIndex: 1, explanation: "【正解: 2】\nピコルナウイルス科エンテロウイルス属のコクサッキーA16型やエンテロウイルス71型が原因となる。" },
+    { id: 68, category: "真菌", question: "真菌の細胞壁の成分はどれか。", options: ["1. ペプチドグリカン", "2. コレステロール", "3. リポ多糖体", "4. β-Dグルカン", "5. セルロース"], correctIndex: 3, explanation: "【正解: 4】\n細菌（ペプチドグリカン）とは異なり、真菌はβ-Dグルカン、キチン、マンナンなどが主成分。細胞膜はエルゴステロールを含む。" },
+    { id: 69, category: "真菌", question: "Cryptococcus neoformansの主な感染経路と好発部位はどれか。", options: ["1. 経口感染・腸炎", "2. 接触感染・皮膚炎", "3. 経気道感染・髄膜炎", "4. 蚊媒介・マラリア", "5. 性行為感染・尿道炎"], correctIndex: 2, explanation: "【正解: 3】\n鳩の糞便汚染土壌などから吸入され、肺から血行性に中枢神経へ播種し、髄膜炎を起こす。墨汁法で診断。" },
+    { id: 70, category: "真菌", question: "二形性を示す真菌はどれか。", options: ["1. Candida albicans", "2. Cryptococcus neoformans", "3. Aspergillus niger", "4. Trichophyton mentagrophytes", "5. Sporothrix schenckii"], correctIndex: 4, explanation: "【正解: 5】\n25℃（自然界）では糸状菌、37℃（生体内）では酵母様真菌として発育する。スポロトリコーシス（リンパ管型など）の原因。" },
+    { id: 71, category: "真菌", question: "Pneumocystis jiroveciiについて正しいのはどれか。", options: ["1. 細胞壁にペプチドグリカンを持つ", "2. 二形成真菌である", "3. 健常者に対しても病原性が高い", "4. 人工培地に発育できる", "5.　感染により血中β-Dグルカンが上昇する"], correctIndex: 4, explanation: "【正解: 5】\nPneumocystis jiroveciiのシスト（嚢子）壁には (1→3)-β-D-グルカン が豊富に含まれる。\nそのため、ニューモシスチス肺炎を発症すると、血中のβ-D-グルカン値が著しく上昇する\n※β-D-グルカンは、カンジダ症、アスペルギルス症でも上昇するが、クリプトコックス症やムーコル症（接合菌症）では上昇しない。" },
+    { id: 72, category: "真菌", question: "マラセチア（Malassezia）属の特徴はどれか。", options: ["1. 脂質要求性がある", "2. 結合組織を好む", "3. 肺に空洞を作る", "4. 髄膜炎の主要な原因である", "5. 角質溶解性が強い"], correctIndex: 0, explanation: "【正解: 1】\n皮膚常在菌であり、脂質を栄養源とするため、皮脂の多い部位（顔面、背部など）で癜風（でんぷう）や脂漏性皮膚炎を起こす。" },
+    { id: 73, category: "感染制御", question: "飛沫核感染する疾患はどれか。", options: ["1. インフルエンザ", "2. マイコプラズマ肺炎", "3. 麻疹", "4. 流行性耳下腺炎", "5. 風疹"], correctIndex: 2, explanation: "【正解: 3】\n結核、麻疹、水痘は空気予防策の対象である代表的疾患。" },
+    { id: 74, category: "感染制御", question: "標準予防策（スタンダードプリコーション）において、手指衛生が最も推奨されるタイミングはどれか。", options: ["1. 滅菌手袋を着用する前だけ", "2. 目に見える汚れがある時だけ", "3. 患者に触れる前後・患者周辺の物品に触れた後", "4. 勤務開始時と終了時だけ", "5. 感染症患者に接した後だけ"], correctIndex: 2, explanation: "【正解: 3】\n全ての患者に対して適用される。手袋着用の有無にかかわらず、患者や周辺環境に触れた前後は手指衛生を行う。" },
+    { id: 75, category: "免疫・ワクチン", question: "生ワクチンが用いられる疾患はどれか。", options: ["1. インフルエンザ", "2. 日本脳炎", "3. 麻疹・風疹・結核（BCG）", "4. B型肝炎", "5. 肺炎球菌感染症"], correctIndex: 2, explanation: "【正解: 3】\n弱毒化した生きた病原体を用いる。麻疹(MR)、水痘、ムンプス、BCG、ロタなどが該当する。" },
+    { id: 76, category: "免疫・ワクチン", question: "トキソイドワクチンが用いられるのはどれか。", options: ["1. 破傷風・ジフテリア", "2. 麻疹・風疹", "3. 百日咳・ポリオ", "4. インフルエンザ", "5. 狂犬病"], correctIndex: 0, explanation: "【正解: 1】\n菌体外毒素をホルマリン処理して無毒化したものを接種し、抗毒素抗体を誘導する。DPTワクチンのTとD。" },
+    { id: 77, category: "法規", question: "感染症法において「直ちに」届け出が必要な五類感染症はどれか。", options: ["1. インフルエンザ", "2. 梅毒", "3. 麻疹・侵襲性髄膜炎菌感染症", "4. アメーバ赤痢", "5. クロイツフェルト・ヤコブ病"], correctIndex: 2, explanation: "【正解: 3】\n五類感染症は通常「7日以内」だが、麻疹、風疹、侵襲性髄膜炎菌感染症は緊急性が高いため「直ちに」届け出る。" },
+    { id: 78, category: "臨床", question: "尿路感染症（単純性膀胱炎など）の起因菌として最も頻度が高いのはどれか。", options: ["1. Pseudomonas aeruginosa", "2. Staphylococcus aureus", "3. Escherichia coli", "4. Enterococcus faecalis", "5. Candida albicans"], correctIndex: 2, explanation: "【正解: 3】\n腸内細菌である大腸菌が尿道口から逆行性に感染するケースが圧倒的に多い。" },
+    { id: 79, category: "細菌各論", question: "食中毒の原因菌で、食品中で産生された神経毒素により呼吸麻痺などの症状を起こすのはどれか。", options: ["1. Salmonella Enteritidis", "2. Vibrio parahaemolyticus", "3. Staphylococcus aureus", "4. Clostridium botulinum", "5. Campylobacter jejuni"], correctIndex: 3, explanation: "【正解: 4】\nボツリヌス菌は毒素型食中毒を起こす。ボツリヌス毒素は神経筋接合部でのアセチルコリン放出を阻害し、弛緩性麻痺・呼吸麻痺を起こす。" },
+    { id: 80, category: "細菌各論", question: "劇症型溶血性レンサ球菌感染症の主な原因菌はどれか。", options: ["1. Staphylococcus aureus", "2. Streptococcus agalactiae", "3. Streptococcus pyogenes", "4. Enterococcus faecium", "5. Streptococcus mutans"], correctIndex: 2, explanation: "【正解: 3】\nA群溶血性レンサ球菌（S. pyogenes）によるものが代表的。急速に進行する壊死性筋膜炎やトキシックショック様症候群を呈する。" },
+    { id: 81, category: "ウイルス", question: "ヒトパピローマウイルス（HPV）が関与するがんはどれか。", options: ["1. 胃癌", "2. 肝細胞癌", "3. 子宮頸癌", "4. 白血病", "5. 悪性リンパ腫"], correctIndex: 2, explanation: "【正解: 3】\nHPV（特に16型、18型などの高リスク型）の持続感染が子宮頸癌の主要な原因となる。ワクチンによる予防が可能。" }
+];
 
-    const quizCard = document.getElementById("quiz-card");
-    const resultScreen = document.getElementById("result-screen");
-    const scoreTextEl = document.getElementById("score-text");
-    const restartBtn = document.getElementById("restart-btn");
+        // --- 状態管理 ---
+        let currentQuizQueue = [];
+        let currentIndex = 0;
+        let score = 0;
 
-    function loadQuestion() {
-      answered = false;
-      selectedIndices = new Set();
-      nextBtn.disabled = true;
-      feedbackEl.classList.add("hidden");
+        // --- DOM要素 ---
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const categoryGrid = document.getElementById('category-grid');
 
-      const q = questions[currentIndex];
-      const isMulti = Array.isArray(q.correct_answer);
+        const categoryBadge = document.getElementById('category-badge');
+        const progressText = document.getElementById('progress-text');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const explanationContainer = document.getElementById('explanation-container');
+        const resultBadge = document.getElementById('result-badge');
+        const explanationText = document.getElementById('explanation-text');
+        const controlsContainer = document.getElementById('controls-container');
+        const nextBtn = document.getElementById('next-btn');
 
-      if (q.category) {
-        categoryEl.textContent = q.category;
-        categoryEl.classList.remove("hidden");
-      } else {
-        categoryEl.classList.add("hidden");
-      }
-
-      questionNumberEl.textContent = `問題 ${currentIndex + 1} / ${questions.length}`;
-      progressEl.textContent = `正答率: ${Math.round((score / Math.max(currentIndex,1)) * 100) || 0}%`;
-      questionTextEl.textContent = q.question_text;
-
-      multiHintEl.classList.toggle("hidden", !isMulti);
-
-      if (q.image_url) {
-        questionImageEl.src = q.image_url;
-        imageWrapEl.classList.remove("hidden");
-      } else {
-        imageWrapEl.classList.add("hidden");
-      }
-
-      choicesEl.innerHTML = "";
-      q.choices.forEach((choice, index) => {
-        const btn = document.createElement("button");
-        btn.className = "w-full text-left border border-slate-200 rounded px-4 py-3 hover:bg-blue-50 transition";
-        btn.textContent = choice;
-        btn.addEventListener("click", () => handleChoice(index, btn));
-        choicesEl.appendChild(btn);
-      });
-    }
-
-    function handleChoice(index, btn) {
-      if (answered) return;
-      const q = questions[currentIndex];
-      const isMulti = Array.isArray(q.correct_answer);
-
-      if (isMulti) {
-        if (selectedIndices.has(index)) {
-          selectedIndices.delete(index);
-          btn.classList.remove("border-blue-500", "bg-blue-50");
-        } else {
-          selectedIndices.add(index);
-          btn.classList.add("border-blue-500", "bg-blue-50");
+        // --- アプリの初期化（分野ボタン生成） ---
+        function initApp() {
+            // 分野のリストを抽出（重複排除）
+            const categories = [...new Set(fullQuizData.map(q => q.category))];
+            
+            categoryGrid.innerHTML = '';
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = "bg-white border border-slate-200 hover:border-blue-400 hover:bg-blue-50 text-slate-700 font-medium py-3 px-4 rounded-lg shadow-sm text-left transition relative";
+                
+                // その分野の問題数カウント
+                const count = fullQuizData.filter(q => q.category === cat).length;
+                
+                btn.innerHTML = `
+                    <span class="block text-lg mb-1">${cat}</span>
+                    <span class="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded-full">${count}問</span>
+                `;
+                btn.onclick = () => startQuiz(cat);
+                categoryGrid.appendChild(btn);
+            });
         }
 
-        if (selectedIndices.size === q.correct_answer.length) {
-          evaluateAnswer();
+        // --- クイズ開始処理 ---
+        function startQuiz(mode) {
+            // モードに応じた問題セットの作成
+            if (mode === 'random') {
+                // 全問題からランダムに10問抽出
+                currentQuizQueue = [...fullQuizData]
+                    .sort(() => 0.5 - Math.random())
+                    .slice(0, 10);
+                categoryBadge.innerText = "ランダム出題";
+            } else {
+                // 指定された分野の問題を抽出
+                currentQuizQueue = fullQuizData.filter(q => q.category === mode);
+                categoryBadge.innerText = mode;
+            }
+
+            if (currentQuizQueue.length === 0) {
+                alert("問題が見つかりませんでした。");
+                return;
+            }
+
+            // 状態リセット
+            currentIndex = 0;
+            score = 0;
+
+            // 画面切り替え
+            startScreen.classList.add('hidden');
+            resultScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+
+            renderQuestion();
         }
-      } else {
-        selectedIndices.clear();
-        selectedIndices.add(index);
-        evaluateAnswer();
-      }
-    }
 
-    function evaluateAnswer() {
-      const q = questions[currentIndex];
-      const isMulti = Array.isArray(q.correct_answer);
-      let isCorrect = false;
+        // --- 問題描画 ---
+        function renderQuestion() {
+            const currentData = currentQuizQueue[currentIndex];
 
-      if (isMulti) {
-        const correctSet = new Set(q.correct_answer);
-        isCorrect = selectedIndices.size === correctSet.size &&
-          [...selectedIndices].every(i => correctSet.has(i));
-      } else {
-        const selected = [...selectedIndices][0];
-        isCorrect = selected === q.correct_answer;
-      }
+            // 進捗表示
+            progressText.innerText = `${currentIndex + 1} / ${currentQuizQueue.length}`;
 
-      if (isCorrect) score++;
+            // 問題文
+            questionText.innerText = currentData.question;
 
-      Array.from(choicesEl.children).forEach((b, idx) => {
-        b.disabled = true;
-        if (isMulti ? q.correct_answer.includes(idx) : idx === q.correct_answer) {
-          b.classList.add("border-green-500", "bg-green-50");
+            // 選択肢
+            optionsContainer.innerHTML = '';
+            currentData.options.forEach((optionText, index) => {
+                const btn = document.createElement('button');
+                btn.innerText = optionText;
+                btn.className = "option-btn w-full text-left p-4 border border-slate-300 rounded-lg hover:bg-blue-50 hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-colors bg-white font-medium text-slate-600";
+                btn.onclick = () => checkAnswer(index, btn);
+                optionsContainer.appendChild(btn);
+            });
+
+            // 解説エリア等は隠す
+            explanationContainer.classList.add('hidden');
+            controlsContainer.classList.add('hidden');
+            
+            // スクロール位置をリセット
+            window.scrollTo(0, 0);
         }
-        if (selectedIndices.has(idx) && !(isMulti ? q.correct_answer.includes(idx) : idx === q.correct_answer)) {
-          b.classList.add("border-red-500", "bg-red-50");
+
+        // --- 正誤判定 ---
+        function checkAnswer(selectedIndex, clickedBtn) {
+            const currentData = currentQuizQueue[currentIndex];
+            const isCorrect = (selectedIndex === currentData.correctIndex);
+            const allBtns = optionsContainer.querySelectorAll('button');
+
+            // ボタン無効化とスタイリング
+            allBtns.forEach((btn, idx) => {
+                btn.disabled = true;
+                btn.classList.remove('hover:bg-blue-50', 'hover:border-blue-400', 'cursor-pointer');
+                btn.classList.add('cursor-default');
+
+                if (idx === currentData.correctIndex) {
+                    // 正解は緑
+                    btn.classList.remove('bg-white', 'border-slate-300', 'text-slate-600');
+                    btn.classList.add('bg-green-100', 'border-green-500', 'font-bold', 'text-green-800');
+                }
+            });
+
+            if (isCorrect) {
+                score++;
+                resultBadge.innerText = "⭕ 正解！";
+                resultBadge.className = "inline-block px-3 py-1 rounded text-white font-bold mb-3 bg-green-500";
+            } else {
+                // 不正解のボタンは赤
+                clickedBtn.classList.remove('bg-white', 'border-slate-300', 'text-slate-600');
+                clickedBtn.classList.add('bg-red-100', 'border-red-500', 'text-red-800');
+                
+                resultBadge.innerText = "❌ 不正解...";
+                resultBadge.className = "inline-block px-3 py-1 rounded text-white font-bold mb-3 bg-red-500";
+            }
+
+            // 解説表示
+            explanationText.innerText = currentData.explanation;
+            explanationContainer.classList.remove('hidden');
+
+            // 次へボタン表示
+            controlsContainer.classList.remove('hidden');
+            nextBtn.innerText = (currentIndex === currentQuizQueue.length - 1) ? "結果を見る" : "次の問題へ";
         }
-      });
 
-      resultTextEl.textContent = isCorrect ? "正解です！" : "不正解です。";
-      resultTextEl.className = isCorrect ? "font-semibold text-green-600" : "font-semibold text-red-600";
-      explanationEl.textContent = q.explanation || "解説はありません。";
-      feedbackEl.classList.remove("hidden");
+        // --- 次の問題へ ---
+        function nextQuestion() {
+            currentIndex++;
+            if (currentIndex < currentQuizQueue.length) {
+                renderQuestion();
+            } else {
+                showResult();
+            }
+        }
 
-      nextBtn.disabled = false;
-      progressEl.textContent = `正答率: ${Math.round((score / (currentIndex + 1)) * 100)}%`;
-    }
+        // --- 結果表示 ---
+        function showResult() {
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
 
-    nextBtn.addEventListener("click", () => {
-      if (currentIndex < questions.length - 1) {
-        currentIndex++;
-        loadQuestion();
-      } else {
-        showResult();
-      }
-    });
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('total-questions').innerText = currentQuizQueue.length;
+            
+            const accuracy = Math.round((score / currentQuizQueue.length) * 100);
+            document.getElementById('accuracy-text').innerText = `正答率: ${accuracy}%`;
+        }
 
-    function showResult() {
-      quizCard.classList.add("hidden");
-      resultScreen.classList.remove("hidden");
-      const percentage = Math.round((score / questions.length) * 100);
-      scoreTextEl.textContent = `${score} / ${questions.length} 正解（正答率 ${percentage}%）`;
-    }
+        // アプリ起動
+        initApp();
 
-    restartBtn.addEventListener("click", () => {
-      currentIndex = 0;
-      score = 0;
-      quizCard.classList.remove("hidden");
-      resultScreen.classList.add("hidden");
-      progressEl.textContent = "";
-      loadQuestion();
-    });
-
-    loadQuestion();
-  </script>
+    </script>
 </body>
 </html>
