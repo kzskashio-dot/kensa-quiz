@@ -14,6 +14,25 @@
         .fade-in { animation: fadeIn 0.3s ease-in; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         /* PWAインストールバナー用（今回は標準ブラウザ機能に任せますがカスタムも可） */
+    /* ▼▼▼ ここから追加 ▼▼▼ */
+    .confidence-wrapper {
+        margin: 10px 0;
+        text-align: right;
+    }
+    .confidence-wrapper label {
+        cursor: pointer;
+        font-weight: bold;
+        color: #555;
+        background: #eee;
+        padding: 5px 10px;
+        border-radius: 5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .confidence-wrapper input {
+        transform: scale(1.3);
+    }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen py-4 px-2 sm:py-8 sm:px-4 text-slate-800 font-sans select-none">
@@ -24,42 +43,62 @@
             <h1 class="text-lg sm:text-xl font-bold flex items-center gap-2 cursor-pointer" onclick="location.reload()">
                 <span>🦠 微生物学 演習</span>
             </h1>
-            <button onclick="resetWrongQuestions()" class="text-xs bg-blue-700 hover:bg-blue-800 px-2 py-1 rounded text-blue-100 hidden" id="reset-history-btn">
-                学習履歴リセット
-            </button>
+            <div class="flex gap-2">
+                <button onclick="resetMarkedQuestions()" class="text-xs bg-orange-600 hover:bg-orange-700 px-2 py-1 rounded text-white hidden" id="reset-marked-btn">
+                    チェック解除
+                </button>
+                <button onclick="resetWrongQuestions()" class="text-xs bg-blue-700 hover:bg-blue-800 px-2 py-1 rounded text-blue-100 hidden" id="reset-history-btn">
+                    履歴消去
+                </button>
+            </div>
         </header>
 
         <div id="start-screen" class="p-6 sm:p-8 flex-1 flex flex-col fade-in overflow-y-auto">
             
-            <div id="review-area" class="mb-6 hidden">
-                <button onclick="startQuiz('review')" class="w-full bg-red-100 hover:bg-red-200 border-2 border-red-400 text-red-700 font-bold text-lg py-4 px-6 rounded-xl shadow-sm transform transition hover:scale-[1.01] flex justify-between items-center group">
-                    <div class="flex items-center gap-2">
-                        <span>🔥 弱点克服</span>
-                        <span class="text-xs bg-red-500 text-white px-2 py-0.5 rounded-full">復習</span>
-                    </div>
-                    <div class="text-right">
-                        <span id="wrong-count" class="text-2xl font-extrabold">0</span>
-                        <span class="text-sm">問</span>
-                    </div>
-                </button>
-                <p class="text-xs text-slate-500 mt-1 text-right">※正解するとリストから消去されます</p>
+            <div class="space-y-4 mb-8">
+                
+                <div id="review-area" class="hidden">
+                    <button onclick="startQuiz('review')" class="w-full bg-red-100 hover:bg-red-200 border-2 border-red-400 text-red-800 font-bold text-lg py-4 px-6 rounded-xl shadow-sm transform transition hover:scale-[1.01] flex justify-between items-center group">
+                        <div class="flex items-center gap-2">
+                            <span>🔥 弱点克服</span>
+                            <span class="text-xs bg-red-500 text-white px-2 py-0.5 rounded-full">間違えた問題</span>
+                        </div>
+                        <div class="text-right">
+                            <span id="wrong-count" class="text-2xl font-extrabold">0</span>
+                            <span class="text-sm">問</span>
+                        </div>
+                    </button>
+                </div>
+
+                <div id="confidence-area" class="hidden">
+                    <button onclick="startQuiz('confidence_review')" class="w-full bg-orange-100 hover:bg-orange-200 border-2 border-orange-400 text-orange-800 font-bold text-lg py-4 px-6 rounded-xl shadow-sm transform transition hover:scale-[1.01] flex justify-between items-center group">
+                        <div class="flex items-center gap-2">
+                            <span>😰 自信なし復習</span>
+                            <span class="text-xs bg-orange-500 text-white px-2 py-0.5 rounded-full">要確認</span>
+                        </div>
+                        <div class="text-right">
+                            <span id="confidence-count" class="text-2xl font-extrabold">0</span>
+                            <span class="text-sm">問</span>
+                        </div>
+                    </button>
+                </div>
+
             </div>
 
             <div class="grid grid-cols-1 gap-4 mb-8">
-                <button onclick="startQuiz('random')" class="w-full bg-gradient-to-r from-orange-400 to-red-500 hover:from-orange-500 hover:to-red-600 text-white font-bold text-lg py-4 px-6 rounded-xl shadow-md transform transition hover:scale-[1.02] flex justify-between items-center">
+                <button onclick="startQuiz('random')" class="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-bold text-lg py-4 px-6 rounded-xl shadow-md transform transition hover:scale-[1.02] flex justify-between items-center">
                     <span>🎲 ランダム10問</span>
                     <span class="bg-white/20 text-sm px-2 py-1 rounded">実力試し</span>
                 </button>
+                
+                <button onclick="startQuiz('exam_random')" class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold text-lg py-4 px-6 rounded-xl shadow-md transform transition hover:scale-[1.02] flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <span>📖 国家試験過去問</span>
+                        <span class="text-xs bg-white/20 px-2 py-1 rounded">ランダム</span>
+                    </div>
+                    <span class="text-2xl">📝</span>
+                </button>
             </div>
-
-<button onclick="startQuiz('exam_random')" class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold text-lg py-4 px-6 rounded-xl shadow-md transform transition hover:scale-[1.02] flex justify-between items-center mb-4">
-                <div class="flex items-center gap-2">
-                    <span>📖 国家試験過去問</span>
-                    <span class="text-xs bg-white/20 px-2 py-1 rounded">ランダム10問</span>
-                </div>
-                <span class="text-2xl">📝</span>
-            </button>
-
 
             <div class="border-t border-slate-200 my-4"></div>
             <p class="text-sm text-slate-400 font-bold mb-3">分野別演習</p>
@@ -76,6 +115,14 @@
 
             <div class="flex-grow">
                 <p id="question-text" class="text-lg font-medium leading-relaxed mb-6"></p>
+                
+                <div class="confidence-wrapper mb-4 text-right">
+                    <label class="cursor-pointer inline-flex items-center gap-2 bg-slate-100 px-3 py-2 rounded-lg hover:bg-slate-200 transition select-none">
+                        <input type="checkbox" id="confidence-check" class="w-5 h-5 text-orange-500 rounded focus:ring-orange-500">
+                        <span class="text-sm font-bold text-slate-600">😰 自信なし（後で復習）</span>
+                    </label>
+                </div>
+
                 <div id="options-container" class="flex flex-col space-y-3 mb-6"></div>
             </div>
 
@@ -93,7 +140,7 @@
 
         <div id="result-screen" class="hidden p-10 flex-1 flex flex-col items-center justify-center fade-in text-center">
             <h2 class="text-3xl font-bold mb-2">演習完了！</h2>
-            <p class="text-slate-500 mb-6">お疲れ様でした</p>
+            <p class="text-slate-500 mb-6">トップ画面に戻って復習できます</p>
             
             <div class="bg-slate-50 rounded-2xl p-8 mb-8 border border-slate-200 w-full max-w-sm">
                 <div class="text-sm text-slate-500 mb-1">スコア</div>
@@ -103,17 +150,20 @@
                 <div id="accuracy-text" class="text-lg font-medium text-slate-600">正答率: 0%</div>
             </div>
 
-            <button onclick="location.reload()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition transform hover:scale-105">
-                コース選択に戻る
+            <button onclick="backToTop()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition transform hover:scale-105">
+                トップ画面へ戻る
             </button>
         </div>
 
     </div>
 
+
 <script>
-        // --- 1. 問題データ ---
-        // ★ここに、これまでの全問題データを貼り付けてください★
-        const fullQuizData = [
+     // --- 1. 問題データ ---
+    // ★ここに、これまでの全問題データ（fullQuizData）を貼り付けてください★
+    // （※データが消えている場合は、前回のチャット履歴からデータをここにコピーしてください）
+
+ const fullQuizData = [
                       { id: 1, category: "総論（分類）", question: "原核生物に該当するのはどれか。", options: ["1. Candida albicans", "2. Escherichia coli", "3. Entamoeba histolytica", "4. Trichophyton rubrum", "5. Influenza virus"], correctIndex: 1, explanation: "【正解: 2】\n原核生物は細菌（真正細菌）と古細菌である。1,4は真菌（真核）、3は原虫（真核）、5はウイルス。" },
     { id: 2, category: "総論（構造）", question: "グラム陰性菌の細胞壁外膜を構成する主な成分はどれか。", options: ["1. ペプチドグリカン", "2. タイコ酸", "3. リポ多糖体（LPS）", "4. ミコール酸", "5. エルゴステロール"], correctIndex: 2, explanation: "【正解: 3】\nグラム陰性菌の外膜にはリポ多糖体（LPS）が存在し、内毒素活性を持つ。タイコ酸はグラム陽性菌、ミコール酸は抗酸菌、エルゴステロールは真菌。" },
     { id: 3, category: "総論（構造）", question: "細菌の芽胞について正しいのはどれか。", options: ["1. 熱に不安定である", "2. 消毒薬に感受性が高い", "3. 栄養欠乏時に形成される", "4. 生殖に関与する", "5. グラム陰性菌のみが形成する"], correctIndex: 2, explanation: "【正解: 3】\n芽胞は環境悪化（栄養欠乏など）時に形成される耐久型構造。熱や消毒薬に極めて強い。グラム陽性桿菌（Bacillus, Clostridium）が形成する。" },
@@ -1619,76 +1669,127 @@
         ];
 
 
-        // --- PWA Service Worker 登録 ---
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').catch(() => {});
-            });
+// --- 0. データ補正 ---
+    // IDがない場合に自動で振る処理
+    if (typeof fullQuizData !== 'undefined') {
+        fullQuizData.forEach((q, index) => {
+            if (q.id === undefined) q.id = index;
+        });
+    }
+
+    // --- PWA Service Worker ---
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(() => {}); });
+    }
+
+    // --- 状態管理変数 ---
+    let currentQuizQueue = [];
+    let currentIndex = 0;
+    let score = 0;
+    let currentSelectedIndices = [];
+    
+    // ローカルストレージの保存キー
+    const STORAGE_KEY_WRONG = 'microbio_wrong_questions';   // 間違えた問題
+    const STORAGE_KEY_MARKED = 'microbio_marked_questions'; // 自信なし（チェック）
+
+    // --- DOM要素の取得 ---
+    const startScreen = document.getElementById('start-screen');
+    const quizScreen = document.getElementById('quiz-screen');
+    const resultScreen = document.getElementById('result-screen');
+    const categoryGrid = document.getElementById('category-grid');
+    
+    const reviewArea = document.getElementById('review-area'); 
+    const confidenceArea = document.getElementById('confidence-area'); 
+    
+    const wrongCountDisplay = document.getElementById('wrong-count');
+    const confidenceCountDisplay = document.getElementById('confidence-count');
+    
+    const categoryBadge = document.getElementById('category-badge');
+    const progressText = document.getElementById('progress-text');
+    const questionText = document.getElementById('question-text');
+    const optionsContainer = document.getElementById('options-container');
+    const explanationContainer = document.getElementById('explanation-container');
+    const resultBadge = document.getElementById('result-badge');
+    const explanationText = document.getElementById('explanation-text');
+    const controlsContainer = document.getElementById('controls-container');
+    const nextBtn = document.getElementById('next-btn');
+
+    // --- ストレージ操作（共通関数） ---
+    function getList(key) {
+        const stored = localStorage.getItem(key);
+        return stored ? JSON.parse(stored) : [];
+    }
+    function saveList(key, list) {
+        localStorage.setItem(key, JSON.stringify(list));
+    }
+    function addId(key, id) {
+        const list = getList(key);
+        if (!list.includes(id)) {
+            list.push(id);
+            saveList(key, list);
+        }
+    }
+    function removeId(key, id) {
+        let list = getList(key);
+        list = list.filter(itemId => itemId !== id);
+        saveList(key, list);
+    }
+
+    // 個別の操作関数
+    function getWrongQuestions() { return getList(STORAGE_KEY_WRONG); }
+    function getMarkedQuestions() { return getList(STORAGE_KEY_MARKED); }
+
+    function resetWrongQuestions() {
+        if(confirm('間違い履歴を全て消去しますか？')) {
+            localStorage.removeItem(STORAGE_KEY_WRONG);
+            initApp();
+        }
+    }
+    function resetMarkedQuestions() {
+        if(confirm('チェックした「自信なし」を全て解除しますか？')) {
+            localStorage.removeItem(STORAGE_KEY_MARKED);
+            initApp();
+        }
+    }
+
+    // --- アプリ初期化（トップ画面表示） ---
+    function initApp() {
+        startScreen.classList.remove('hidden');
+        quizScreen.classList.add('hidden');
+        resultScreen.classList.add('hidden');
+
+        // 1. 弱点（間違い）ボタンの制御
+        const wrongIds = getWrongQuestions();
+        if (wrongIds.length > 0) {
+            reviewArea.classList.remove('hidden');
+            wrongCountDisplay.innerText = wrongIds.length;
+            const historyBtn = document.getElementById('reset-history-btn');
+            if(historyBtn) historyBtn.classList.remove('hidden');
+        } else {
+            reviewArea.classList.add('hidden');
+            const historyBtn = document.getElementById('reset-history-btn');
+            if(historyBtn) historyBtn.classList.add('hidden');
         }
 
-        // --- 状態管理変数 ---
-        let currentQuizQueue = [];
-        let currentIndex = 0;
-        let score = 0;
-        let currentSelectedIndices = []; // 現在選択中の選択肢（配列）
-        const STORAGE_KEY = 'microbio_wrong_questions';
-
-        // --- DOM要素の取得 ---
-        const startScreen = document.getElementById('start-screen');
-        const quizScreen = document.getElementById('quiz-screen');
-        const resultScreen = document.getElementById('result-screen');
-        const categoryGrid = document.getElementById('category-grid');
-        const reviewArea = document.getElementById('review-area');
-        const wrongCountDisplay = document.getElementById('wrong-count');
-        const categoryBadge = document.getElementById('category-badge');
-        const progressText = document.getElementById('progress-text');
-        const questionText = document.getElementById('question-text');
-        const optionsContainer = document.getElementById('options-container');
-        const explanationContainer = document.getElementById('explanation-container');
-        const resultBadge = document.getElementById('result-badge');
-        const explanationText = document.getElementById('explanation-text');
-        const controlsContainer = document.getElementById('controls-container');
-        const nextBtn = document.getElementById('next-btn');
-
-        // --- ローカルストレージ操作（復習機能） ---
-        function getWrongQuestions() {
-            const stored = localStorage.getItem(STORAGE_KEY);
-            return stored ? JSON.parse(stored) : [];
-        }
-        function addWrongQuestion(id) {
-            const list = getWrongQuestions();
-            if (!list.includes(id)) {
-                list.push(id);
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-            }
-        }
-        function removeWrongQuestion(id) {
-            let list = getWrongQuestions();
-            list = list.filter(itemId => itemId !== id);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-        }
-        function resetWrongQuestions() {
-            if(confirm('間違えた問題の履歴を全て消去しますか？')) {
-                localStorage.removeItem(STORAGE_KEY);
-                location.reload();
-            }
+        // 2. 自信なしボタンの制御
+        const markedIds = getMarkedQuestions();
+        if (markedIds.length > 0) {
+            confidenceArea.classList.remove('hidden');
+            confidenceCountDisplay.innerText = markedIds.length;
+            const markBtn = document.getElementById('reset-marked-btn');
+            if(markBtn) markBtn.classList.remove('hidden');
+        } else {
+            confidenceArea.classList.add('hidden');
+            const markBtn = document.getElementById('reset-marked-btn');
+            if(markBtn) markBtn.classList.add('hidden');
         }
 
-        // --- アプリ初期化 ---
-        function initApp() {
-            // 復習ボタンの制御
-            const wrongIds = getWrongQuestions();
-            if (wrongIds.length > 0) {
-                reviewArea.classList.remove('hidden');
-                wrongCountDisplay.innerText = wrongIds.length;
-                document.getElementById('reset-history-btn').classList.remove('hidden');
-            } else {
-                reviewArea.classList.add('hidden');
-            }
-
-            // 分野ボタンの生成
+        // ★★★ 修正箇所：分野ボタン生成 ★★★
+        if(typeof fullQuizData !== 'undefined') {
+            // HTML内のコメントやゴミを掃除してから生成する（これで確実に表示されます）
+            categoryGrid.innerHTML = ''; 
+            
             const categories = [...new Set(fullQuizData.map(q => q.category))];
-            categoryGrid.innerHTML = '';
             categories.forEach(cat => {
                 const btn = document.createElement('button');
                 btn.className = "bg-white border border-slate-200 hover:border-blue-400 hover:bg-blue-50 text-slate-700 font-medium py-4 px-4 rounded-lg shadow-sm text-left transition relative";
@@ -1698,200 +1799,194 @@
                 categoryGrid.appendChild(btn);
             });
         }
+    }
 
-        // --- クイズ開始処理 ---
-        function startQuiz(mode) {
-            // モードに応じた問題抽出
-            if (mode === 'random') {
-                // 全問からランダム10問
-                currentQuizQueue = [...fullQuizData].sort(() => 0.5 - Math.random()).slice(0, 10);
-                categoryBadge.innerText = "ランダム出題";
-            } else if (mode === 'exam_random') {
-                // 国家試験過去問（sourceIdがあるもの）からランダム10問
-                const examQuestions = fullQuizData.filter(q => q.sourceId);
-                if (examQuestions.length === 0) { alert("国家試験問題データがありません"); return; }
-                currentQuizQueue = [...examQuestions].sort(() => 0.5 - Math.random()).slice(0, 10);
-                categoryBadge.innerText = "国家試験過去問";
-            } else if (mode === 'review') {
-                // 復習モード
-                const wrongIds = getWrongQuestions();
-                currentQuizQueue = fullQuizData.filter(q => wrongIds.includes(q.id));
-                currentQuizQueue.sort(() => 0.5 - Math.random());
-                categoryBadge.innerText = "🔥 弱点克服";
-            } else {
-                // 特定分野
-                currentQuizQueue = fullQuizData.filter(q => q.category === mode);
-                categoryBadge.innerText = mode;
-            }
-
-            if (currentQuizQueue.length === 0) { alert("問題がありません"); return; }
-
-            // 画面遷移
-            currentIndex = 0;
-            score = 0;
-            startScreen.classList.add('hidden');
-            resultScreen.classList.add('hidden');
-            quizScreen.classList.remove('hidden');
-            renderQuestion();
+    // --- クイズ開始処理 ---
+    function startQuiz(mode) {
+        if(typeof fullQuizData === 'undefined' || fullQuizData.length === 0) {
+            alert("問題データが読み込まれていません。\nコード内の「fullQuizData」を確認してください。");
+            return;
         }
 
-        // --- 問題描画 ---
-        function renderQuestion() {
-            const currentData = currentQuizQueue[currentIndex];
-            currentSelectedIndices = []; // 選択状態をリセット
-
-            // 進捗表示
-            progressText.innerText = `${currentIndex + 1} / ${currentQuizQueue.length}`;
-            questionText.innerText = currentData.question;
-
-            // 国家試験番号バッジの表示制御
-            const oldSourceBadge = document.getElementById('source-badge');
-            if(oldSourceBadge) oldSourceBadge.remove();
-            
-            if (currentData.sourceId) {
-                const badge = document.createElement('span');
-                badge.id = 'source-badge';
-                badge.className = "inline-block bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded ml-2 mb-2 border border-orange-200";
-                badge.innerText = `第${currentData.sourceId}問`;
-                // 問題文の直前に挿入
-                questionText.parentNode.insertBefore(badge, questionText);
-            }
-
-            // 正解データ（配列）の準備
-            // 古いデータ形式(correctIndex)も新しい形式(correctIndices)も配列に統一
-            const correctAnswers = currentData.correctIndices || [currentData.correctIndex];
-            const requiredCount = correctAnswers.length;
-
-            // 「◯個選べ」のガイダンス表示
-            let guidance = document.getElementById('guidance-text');
-            if(!guidance) {
-                guidance = document.createElement('div');
-                guidance.id = 'guidance-text';
-                guidance.className = "text-sm text-blue-600 font-bold mb-3";
-                optionsContainer.parentNode.insertBefore(guidance, optionsContainer);
-            }
-            // 2つ以上選ぶ場合のみガイダンスを表示
-            guidance.innerText = requiredCount > 1 ? `※ ${requiredCount}つ選択してください` : "";
-            guidance.className = requiredCount > 1 ? "text-sm text-blue-600 font-bold mb-3 block" : "hidden";
-
-
-            // 選択肢ボタン生成
-            optionsContainer.innerHTML = '';
-            currentData.options.forEach((optionText, index) => {
-                const btn = document.createElement('button');
-                btn.innerText = optionText;
-                btn.className = "option-btn w-full text-left p-4 border border-slate-300 rounded-lg hover:bg-slate-50 focus:outline-none transition-colors bg-white font-medium text-slate-600";
-                
-                // クリック時の挙動設定
-                btn.onclick = () => handleOptionClick(index, btn, requiredCount, correctAnswers);
-                
-                optionsContainer.appendChild(btn);
-            });
-
-            // 解説エリア等は隠す
-            explanationContainer.classList.add('hidden');
-            controlsContainer.classList.add('hidden');
-            
-            window.scrollTo(0, 0);
+        if (mode === 'random') {
+            currentQuizQueue = [...fullQuizData].sort(() => 0.5 - Math.random()).slice(0, 10);
+            categoryBadge.innerText = "🎲 ランダム";
+        } else if (mode === 'exam_random') {
+            const examQuestions = fullQuizData.filter(q => q.sourceId);
+            if (examQuestions.length === 0) { alert("データなし"); return; }
+            currentQuizQueue = [...examQuestions].sort(() => 0.5 - Math.random()).slice(0, 10);
+            categoryBadge.innerText = "📝 過去問";
+        } else if (mode === 'review') { 
+            // 弱点克服
+            const ids = getWrongQuestions();
+            currentQuizQueue = fullQuizData.filter(q => ids.includes(q.id));
+            currentQuizQueue.sort(() => 0.5 - Math.random());
+            categoryBadge.innerText = "🔥 弱点克服";
+        } else if (mode === 'confidence_review') { 
+            // 自信なし復習
+            const ids = getMarkedQuestions();
+            currentQuizQueue = fullQuizData.filter(q => ids.includes(q.id));
+            categoryBadge.innerText = "😰 自信なし復習";
+        } else { 
+            // 分野別
+            currentQuizQueue = fullQuizData.filter(q => q.category === mode);
+            categoryBadge.innerText = mode;
         }
 
-        // --- 選択肢クリック時の処理 ---
-        function handleOptionClick(selectedIndex, btn, requiredCount, correctAnswers) {
-            // 既に選択済みなら解除（トグル）
-            if (currentSelectedIndices.includes(selectedIndex)) {
-                currentSelectedIndices = currentSelectedIndices.filter(i => i !== selectedIndex);
-                // スタイル解除
-                btn.classList.remove('bg-blue-100', 'border-blue-500', 'text-blue-800');
-                btn.classList.add('bg-white', 'border-slate-300', 'text-slate-600');
+        if (currentQuizQueue.length === 0) { alert("対象の問題がありません"); return; }
+
+        currentIndex = 0;
+        score = 0;
+        currentSelectedIndices = [];
+        
+        startScreen.classList.add('hidden');
+        resultScreen.classList.add('hidden');
+        quizScreen.classList.remove('hidden');
+        renderQuestion();
+    }
+
+    // --- 問題描画 ---
+    function renderQuestion() {
+        const currentData = currentQuizQueue[currentIndex];
+        
+        progressText.innerText = `${currentIndex + 1} / ${currentQuizQueue.length}`;
+        questionText.innerText = currentData.question;
+
+        // ★チェックボックス処理
+        const check = document.getElementById('confidence-check');
+        // イベント重複防止のためリセット
+        const newCheck = check.cloneNode(true);
+        check.parentNode.replaceChild(newCheck, check);
+
+        const markedIds = getMarkedQuestions();
+        newCheck.checked = markedIds.includes(currentData.id);
+
+        newCheck.addEventListener('change', (e) => {
+            if(e.target.checked) {
+                addId(STORAGE_KEY_MARKED, currentData.id);
             } else {
-                // 未選択なら追加
-                currentSelectedIndices.push(selectedIndex);
-                // スタイル適用（青色ハイライト）
+                removeId(STORAGE_KEY_MARKED, currentData.id);
+            }
+        });
+
+        // 選択肢エリアのクリア
+        optionsContainer.innerHTML = '';
+        currentSelectedIndices = [];
+
+        // 過去問バッジ
+        const oldBadge = document.getElementById('source-badge');
+        if(oldBadge) oldBadge.remove();
+        if (currentData.sourceId) {
+            const badge = document.createElement('span');
+            badge.id = 'source-badge';
+            badge.className = "inline-block bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded ml-2 mb-2 border border-orange-200";
+            badge.innerText = `第${currentData.sourceId}問`;
+            questionText.parentNode.insertBefore(badge, questionText);
+        }
+
+        // 複数選択の案内
+        const correctAnswers = currentData.correctIndices || [currentData.correctIndex];
+        const requiredCount = correctAnswers.length;
+        let guidance = document.getElementById('guidance-text');
+        if(!guidance) {
+            guidance = document.createElement('div');
+            guidance.id = 'guidance-text';
+            optionsContainer.parentNode.insertBefore(guidance, optionsContainer);
+        }
+        guidance.className = requiredCount > 1 ? "text-sm text-blue-600 font-bold mb-3 block" : "hidden";
+        guidance.innerText = requiredCount > 1 ? `※ ${requiredCount}つ選択してください` : "";
+
+        // 選択肢ボタン生成
+        currentData.options.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.innerText = opt;
+            btn.className = "option-btn w-full text-left p-4 border border-slate-300 rounded-lg hover:bg-slate-50 focus:outline-none transition-colors bg-white font-medium text-slate-600";
+            btn.onclick = () => handleOptionClick(idx, btn, requiredCount, correctAnswers);
+            optionsContainer.appendChild(btn);
+        });
+
+        explanationContainer.classList.add('hidden');
+        controlsContainer.classList.add('hidden');
+        window.scrollTo(0, 0);
+    }
+
+    // --- 選択肢クリック ---
+    function handleOptionClick(idx, btn, req, answers) {
+        if (currentSelectedIndices.includes(idx)) {
+            currentSelectedIndices = currentSelectedIndices.filter(i => i !== idx);
+            btn.classList.remove('bg-blue-100', 'border-blue-500', 'text-blue-800');
+            btn.classList.add('bg-white', 'border-slate-300', 'text-slate-600');
+        } else {
+            if (currentSelectedIndices.length < req) {
+                currentSelectedIndices.push(idx);
                 btn.classList.remove('bg-white', 'border-slate-300', 'text-slate-600');
                 btn.classList.add('bg-blue-100', 'border-blue-500', 'text-blue-800');
             }
-
-            // 規定数（例: 2つ）選んだ瞬間に正誤判定へ
-            if (currentSelectedIndices.length === requiredCount) {
-                finalizeAnswer(correctAnswers);
-            }
         }
+        if (currentSelectedIndices.length === req) finalizeAnswer(answers);
+    }
 
-        // --- 正誤判定と結果表示 ---
-        function finalizeAnswer(correctAnswers) {
-            const currentData = currentQuizQueue[currentIndex];
-            const allBtns = optionsContainer.querySelectorAll('button');
+    // --- 正誤判定 ---
+    function finalizeAnswer(answers) {
+        const currentData = currentQuizQueue[currentIndex];
+        const allBtns = optionsContainer.querySelectorAll('button');
+        const sortedSel = [...currentSelectedIndices].sort();
+        const sortedAns = [...answers].sort();
+        const isCorrect = JSON.stringify(sortedSel) === JSON.stringify(sortedAns);
 
-            // 配列の内容を比較して正誤判定（順序不同に対応するためソートして文字列化）
-            const sortedSelected = [...currentSelectedIndices].sort();
-            const sortedCorrect = [...correctAnswers].sort();
-            const isCorrect = JSON.stringify(sortedSelected) === JSON.stringify(sortedCorrect);
-
-            // ボタンのスタイル更新（正解・不正解の可視化）
-            allBtns.forEach((btn, idx) => {
-                btn.disabled = true; // ボタン無効化
-                btn.classList.remove('hover:bg-slate-50', 'cursor-pointer', 'bg-blue-100', 'bg-white', 'text-blue-800');
-                btn.classList.add('cursor-default');
-
-                if (correctAnswers.includes(idx)) {
-                    // 正解の選択肢はすべて「緑」
-                    btn.classList.add('bg-green-100', 'border-green-500', 'font-bold', 'text-green-800');
-                    
-                    // 自分が選んでいなかった正解（選び忘れ）は枠線で強調
-                    if (!currentSelectedIndices.includes(idx)) {
-                        btn.classList.add('ring-2', 'ring-green-300');
-                    }
-                } else if (currentSelectedIndices.includes(idx)) {
-                    // 選んでしまった不正解は「赤」
-                    btn.classList.add('bg-red-100', 'border-red-500', 'text-red-800');
-                } else {
-                    // 関係ない選択肢はグレーアウト
-                    btn.classList.add('bg-slate-50', 'border-slate-200', 'text-slate-400');
-                }
-            });
-
-            // スコア更新と復習リストへの追加・削除
-            if (isCorrect) {
-                score++;
-                resultBadge.innerText = "⭕ 正解！";
-                resultBadge.className = "inline-block px-3 py-1 rounded text-white font-bold mb-3 bg-green-500";
-                removeWrongQuestion(currentData.id); // 正解したら復習リストから消す
+        allBtns.forEach((btn, i) => {
+            btn.disabled = true;
+            btn.classList.remove('hover:bg-slate-50', 'cursor-pointer', 'bg-blue-100', 'bg-white', 'text-blue-800');
+            btn.classList.add('cursor-default');
+            if (answers.includes(i)) {
+                btn.classList.add('bg-green-100', 'border-green-500', 'font-bold', 'text-green-800');
+                if (!currentSelectedIndices.includes(i)) btn.classList.add('ring-2', 'ring-green-300');
+            } else if (currentSelectedIndices.includes(i)) {
+                btn.classList.add('bg-red-100', 'border-red-500', 'text-red-800');
             } else {
-                resultBadge.innerText = "❌ 不正解...";
-                resultBadge.className = "inline-block px-3 py-1 rounded text-white font-bold mb-3 bg-red-500";
-                addWrongQuestion(currentData.id); // 間違えたら復習リストに入れる
+                btn.classList.add('bg-slate-50', 'border-slate-200', 'text-slate-400');
             }
+        });
 
-            // 解説表示
-            explanationText.innerText = currentData.explanation;
-            explanationContainer.classList.remove('hidden');
-            controlsContainer.classList.remove('hidden');
-            
-            nextBtn.innerText = (currentIndex === currentQuizQueue.length - 1) ? "結果を見る" : "次の問題へ";
+        if (isCorrect) {
+            score++;
+            resultBadge.innerText = "⭕ 正解！";
+            resultBadge.className = "inline-block px-3 py-1 rounded text-white font-bold mb-3 bg-green-500";
+            removeId(STORAGE_KEY_WRONG, currentData.id); // 正解したら弱点リストから削除
+        } else {
+            resultBadge.innerText = "❌ 不正解...";
+            resultBadge.className = "inline-block px-3 py-1 rounded text-white font-bold mb-3 bg-red-500";
+            addId(STORAGE_KEY_WRONG, currentData.id); // 間違えたら弱点リストに追加
         }
 
-        // --- 次の問題へ ---
-        function nextQuestion() {
-            currentIndex++;
-            if (currentIndex < currentQuizQueue.length) {
-                renderQuestion();
-            } else {
-                showResult();
-            }
-        }
+        explanationText.innerText = currentData.explanation;
+        explanationContainer.classList.remove('hidden');
+        controlsContainer.classList.remove('hidden');
+        nextBtn.innerText = (currentIndex === currentQuizQueue.length - 1) ? "結果を見る" : "次の問題へ";
+    }
 
-        // --- 結果画面 ---
-        function showResult() {
-            quizScreen.classList.add('hidden');
-            resultScreen.classList.remove('hidden');
+    // --- 次へ ---
+    function nextQuestion() {
+        currentIndex++;
+        if (currentIndex < currentQuizQueue.length) renderQuestion();
+        else showResultScreen();
+    }
 
-            document.getElementById('final-score').innerText = score;
-            document.getElementById('total-questions').innerText = currentQuizQueue.length;
-            
-            const accuracy = Math.round((score / currentQuizQueue.length) * 100);
-            document.getElementById('accuracy-text').innerText = `正答率: ${accuracy}%`;
-        }
+    // --- 結果画面 ---
+    function showResultScreen() {
+        quizScreen.classList.add('hidden');
+        resultScreen.classList.remove('hidden');
+        document.getElementById('final-score').innerText = score;
+        document.getElementById('total-questions').innerText = currentQuizQueue.length;
+        document.getElementById('accuracy-text').innerText = `正答率: ${Math.round((score / currentQuizQueue.length) * 100)}%`;
+    }
 
-        // アプリ起動
+    // トップに戻る（ボタン再描画のためinitAppを呼ぶ）
+    function backToTop() {
         initApp();
-    </script>
+    }
+
+    // アプリ起動
+    initApp();
+
+</script>
